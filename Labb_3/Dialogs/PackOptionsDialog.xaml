@@ -1,0 +1,29 @@
+﻿<Window x:Class="Labb_3.Dialogs.PackOptionsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Labb_3.Dialogs"
+        mc:Ignorable="d"
+        Title="Pack Options" Height="220" Width="200" ResizeMode="NoResize">
+    
+    <StackPanel Margin="10 10 10 0">
+    
+        
+        <Label Content="Pack Name:" FontWeight="Bold"/>
+        <TextBox Text="Default Question Pack"/>
+        <Label Content="Difficulty:" FontWeight="Bold"/>
+        <ComboBox x:Name="difficultyComboBox" />
+        <Label Content="Time Limit:" FontWeight="Bold"/>
+        <Slider x:Name="timeSlider"
+                Minimum="0"
+                Maximum="120"
+                Value="25"
+                IsSnapToTickEnabled="true"
+            TickPlacement="BottomRight"
+            />
+
+
+
+    </StackPanel>
+</Window>
