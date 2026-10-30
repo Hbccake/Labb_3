@@ -4,53 +4,70 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb_3.Views"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              DataContext="{Binding ConfigurationViewModel}"
              d:DesignHeight="450" d:DesignWidth="800">
+    
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-    <ColumnDefinition Width="*"/>
-    <ColumnDefinition Width="*"/>
-</Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
 
-        <StackPanel Orientation="Horizontal" Margin="5 0 5 0" Grid.Row="0" Grid.Column="0">
-            <Label Content="Default Question Pack" FontWeight="Bold"/>
+        <Label Content="{Binding ActivePack.Name}" FontWeight="Bold"/>
+        <StackPanel Orientation="Horizontal" Margin="5 0 5 0" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">
             <Button Content="Pack options"/>
-            <Button Content="Add Question"/>
+            <Button Content="Add Question" />
             <Button Content="Remove Question"/>
         </StackPanel>
-        
-        <ListBox Margin="5" Grid.Row="1" Grid.Column="0">
-            <ListBoxItem  Content="Question:" FontWeight="Bold">
-         
-            </ListBoxItem>
+
+        <ListBox Margin="5" Grid.Row="1" Grid.Column="0" 
+                 
+                 ItemsSource="{Binding ActivePack.Questions}" 
+                 SelectedItem="{Binding SelectedQuestion}"
+                 >
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Margin="3 0" Text="Question:" FontWeight="Bold"/>
+                        <TextBlock Margin="3 0" Text="{Binding Query}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
-        <StackPanel  Orientation="Vertical" Grid.Row="1" Grid.Column="1" Margin="15 0 20 0">
-               
+
+
+        <StackPanel 
+                        DataContext="{Binding SelectedQuestion}"
+                        Orientation="Vertical" 
+                        Grid.Row="1" 
+                        Grid.Column="1" 
+                        Margin="15 0 20 0" >
+
             <Label Content="Question:" FontWeight="Bold"/>
-            <TextBox Height="80" Margin="0 0 0 30"/>
+            <TextBox Height="80" Margin="0 0 0 30" 
+                     Text="{Binding Query}" 
+                       />
             <Label Content="Correct Answer" FontWeight="Bold"/>
-            <TextBox/>
+            <TextBox Text="{Binding CorrectAnswer}"/>
             <Label Content="First incorrect Answer:" FontWeight="Bold"/>
-            <TextBox/>
+            <TextBox Text="{Binding IncorrectAnswers[0]}"/>
             <Label Content="Second incorrect Answer:" FontWeight="Bold"/>
             <TextBox/>
             <Label Content="Third incorrect Answer:" FontWeight="Bold"/>
             <TextBox/>
-            
+
         </StackPanel>
-        
-        
-        
-        <!--<Button
-            VerticalAlignment="Center" 
-            HorizontalAlignment="Center"
-            Content="{Binding ActivePack.Name}"
-            />-->
+
+
+
+      
     </Grid>
 </UserControl>

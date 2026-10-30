@@ -16,13 +16,13 @@
         <ComboBox x:Name="difficultyComboBox" Text="{Binding Difficulty}"/>
         <StackPanel Orientation="Horizontal" >
             <Label Content="Time Limit:" FontWeight="Bold"/>
-            <TextBox Text="Time" Margin="50 0 " VerticalAlignment="Center"/>
+            <Label Content="{Binding TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
         </StackPanel>
             
         <Slider x:Name="timeSlider"
               Minimum="0"
               Maximum="120"
-              Value="25"
+              Value="{Binding TimeLimitInSeconds}"
               IsSnapToTickEnabled="true"
           TickPlacement="BottomRight"
           />

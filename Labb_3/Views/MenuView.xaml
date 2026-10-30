@@ -4,19 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb_3.Views"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Menu>
             <MenuItem Header="_File">
-                <MenuItem Header="_New Question Pack"/>
-                <MenuItem Header="_Select Question Pack"/>                <MenuItem Header="_Delete Question Pack"/>                <MenuItem Header="_Import Questions"/>
-                <MenuItem Header="E_xit" InputGestureText="Alt+F4"/>
+                <MenuItem Header="_New Question Pack" Icon="{fa:Icon FolderPlus}"/>
+                <MenuItem Header="_Select Question Pack" Icon="{fa:Icon FolderOpen}">                    <MenuItem Header="Samplepack"/>                </MenuItem>                <MenuItem Header="_Delete Question Pack" Icon="{fa:Icon FolderMinus}"/>                <MenuItem Header="_Import Questions" Icon="{fa:Icon FileImport}"/>
+                <MenuItem Header="E_xit" InputGestureText="Alt+F4" Icon="{fa:Icon SquareXmark}"/>
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Add Question"/>                <MenuItem Header="_Remove Question"/>                <MenuItem Header="Pack _Options"/>
+                <MenuItem Header="_Add Question" Icon="{fa:Icon Plus}"/>                <MenuItem Header="_Remove Question" Icon="{fa:Icon Minus}"/>                <MenuItem Header="Pack _Options" Icon="{fa:Icon Sliders}"/>
             </MenuItem>
-            <MenuItem Header="_View">                <MenuItem Header="_Play"/>                <MenuItem Header="_Edit"/>                <MenuItem Header="_Fullscreen"/>            </MenuItem>
+            <MenuItem Header="_View">                <MenuItem Header="_Play" Icon="{fa:Icon Play}"/>                <MenuItem Header="_Edit" Icon="{fa:Icon Gears}"/>                <MenuItem Header="_Fullscreen" Icon="{fa:Icon Expand}"/>            </MenuItem>
         </Menu>
     </Grid>
 </UserControl>

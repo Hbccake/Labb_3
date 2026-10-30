@@ -6,7 +6,45 @@
              xmlns:local="clr-namespace:Labb_3.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid ShowGridLines="True">
+        <!--<Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>-->
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <StackPanel Grid.Row="0" Grid.RowSpan="2">
             
+        <StackPanel Orientation="Vertical" Margin="20" HorizontalAlignment="Center">
+            
+        <TextBlock HorizontalAlignment="Center" Text="Question" FontSize="20" FontWeight="Bold" />
+            <Label HorizontalAlignment="Center" Content="Question * of *"/>
+        </StackPanel>
+        </StackPanel>
+
+
+
+        <StackPanel Grid.Row="2" HorizontalAlignment="Center"  Orientation="Horizontal" Margin="5 0">
+                
+            <Button Content="Answer1" Margin="10" Height="70" Width="200"/>
+                <Button Content="Answer2" Margin="10  " Height="70" Width="200"/>
+            </StackPanel>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Stretch" >
+
+                <Button Content="Answer3" Margin="10" Height="70" Width="200"/>
+                <Button Content="Answer4" Margin="10" Height="70" Width="200"/>
+            </StackPanel>
+
+        
+
+
+
     </Grid>
 </UserControl>
