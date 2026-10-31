@@ -4,9 +4,20 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb_3.Views"
+             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
-            
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+            <Label Content="Complete!" HorizontalAlignment="Center" FontSize="40"/>
+            <TextBlock Text="You got * out of * answers correct!" FontSize="20"/>
+            <Button Margin="10" Width="100" Height="30">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Label Content="{fa:Icon Rotate}" FontSize="15" />
+                <TextBlock Text="Restart" Margin="3" FontSize="15"/>
+                </StackPanel>
+                </Button>
+        </StackPanel> 
     </Grid>
 </UserControl>
+

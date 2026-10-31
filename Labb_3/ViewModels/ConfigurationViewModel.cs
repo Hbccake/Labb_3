@@ -6,7 +6,6 @@ class ConfigurationViewModel : ViewModelBase
 {
 
     private readonly MainWindowViewModel? _mainWindowViewModel;
-
     public QuestionPackViewModel? ActivePack { get => _mainWindowViewModel?.ActivePack; }
     public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
 

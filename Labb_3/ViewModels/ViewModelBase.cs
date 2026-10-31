@@ -9,7 +9,7 @@ class ViewModelBase : INotifyPropertyChanged
 
     public void RaisePropertyChanged([CallerMemberName] string? propertyName = null)
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(propertyName)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 
     protected bool SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
@@ -21,4 +21,5 @@ class ViewModelBase : INotifyPropertyChanged
         RaisePropertyChanged(propertyName);
         return true;
     }
+
 }

@@ -21,13 +21,14 @@
 
 
         <Label Content="{Binding ActivePack.Name}" FontWeight="Bold"/>
-        <StackPanel Orientation="Horizontal" Margin="5 0 5 0" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">
-            <Button Content="Pack options"/>
-            <Button Content="Add Question" />
-            <Button Content="Remove Question"/>
+        <StackPanel Orientation="Horizontal"  Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right" VerticalAlignment="Center" >
+            <Button Margin="3" Content="{fa:Icon Sliders}"/>
+            <Button Margin="3" Content="{fa:Icon Plus}" />
+            <Button Margin="3 " Content="{fa:Icon Minus}"/>
+           
         </StackPanel>
 
-        <ListBox Margin="5" Grid.Row="1" Grid.Column="0" 
+        <ListBox Margin="5 0 0 5" Grid.Row="1" Grid.Column="0" 
                  
                  ItemsSource="{Binding ActivePack.Questions}" 
                  SelectedItem="{Binding SelectedQuestion}"
@@ -51,18 +52,18 @@
                         Grid.Column="1" 
                         Margin="15 0 20 0" >
 
-            <Label Content="Question:" FontWeight="Bold"/>
+            <Label Content="Question:" FontWeight="Bold" />
             <TextBox Height="80" Margin="0 0 0 30" 
-                     Text="{Binding Query}" 
+                     Text="{Binding Query , Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
                        />
             <Label Content="Correct Answer" FontWeight="Bold"/>
             <TextBox Text="{Binding CorrectAnswer}"/>
             <Label Content="First incorrect Answer:" FontWeight="Bold"/>
             <TextBox Text="{Binding IncorrectAnswers[0]}"/>
             <Label Content="Second incorrect Answer:" FontWeight="Bold"/>
-            <TextBox/>
+            <TextBox Text="{Binding IncorrectAnswers[1]}"/>
             <Label Content="Third incorrect Answer:" FontWeight="Bold"/>
-            <TextBox/>
+            <TextBox Text="{Binding IncorrectAnswers[2]}"/>
 
         </StackPanel>
 

@@ -21,8 +21,6 @@ class MainWindowViewModel : ViewModelBase
     }
 
 
-
-
     public PlayerViewModel? PlayerViewModel { get; }
     public ConfigurationViewModel? ConfigurationViewModel { get; }
     public MainWindowViewModel()
@@ -35,6 +33,8 @@ class MainWindowViewModel : ViewModelBase
         questionPack.Questions.Add(new Question("Vad är 2 + 3?", "5", "10", "8", "1"));
 
         ActivePack = new QuestionPackViewModel(questionPack);
+
+
     }
 
 }
