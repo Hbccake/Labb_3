@@ -7,6 +7,17 @@
         xmlns:views="clr-namespace:Labb_3.Views"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.InputBindings>
+        <KeyBinding  Key="N" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.OpenCreateNewPackDialogCommand}"/>
+        <KeyBinding  Key="I" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="Enter" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+    </Window.InputBindings>
+    
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -15,8 +26,8 @@
         
         
         <views:MenuView Grid.Row="0"/>
-        <views:PlayerView Grid.Row="1"/>
-        <!--<views:ConfigurationView Grid.Row="1"/>-->
+        <!--<views:PlayerView Grid.Row="1"/>-->
+        <views:ConfigurationView Grid.Row="1"/>
         <!--<views:QuizEndView/>-->
     </Grid>
 </Window>

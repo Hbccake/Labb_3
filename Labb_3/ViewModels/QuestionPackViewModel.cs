@@ -43,6 +43,7 @@ class QuestionPackViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
     public ObservableCollection<Question> Questions { get; }
 
 

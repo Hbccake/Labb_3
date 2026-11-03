@@ -7,6 +7,7 @@ namespace Labb_3;
 /// </summary>
 public partial class MainWindow : Window
 {
+
     public MainWindow()
     {
         InitializeComponent();
@@ -15,7 +16,6 @@ public partial class MainWindow : Window
 
 
     }
-
 
 
 

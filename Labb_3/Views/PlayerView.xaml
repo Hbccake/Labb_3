@@ -21,10 +21,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <StackPanel Grid.Row="0">
-            
-        <StackPanel Orientation="Vertical" Margin="20" HorizontalAlignment="Center">
 
-                <TextBlock Text="{Binding ActivePack.CurrentQuestion.Query}" FontSize="20" FontWeight="Bold" />
+            <StackPanel  Orientation="Vertical" Margin="20" HorizontalAlignment="Center" >
+
+                <TextBlock Text="{Binding ActivePack.Query}" FontSize="20" FontWeight="Bold" />
             <Label HorizontalAlignment="Center" Content="Question * of *"/>
             </StackPanel>
         </StackPanel>

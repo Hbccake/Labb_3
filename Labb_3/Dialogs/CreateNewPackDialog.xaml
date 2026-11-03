@@ -4,8 +4,10 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3.Dialogs"
+        ResizeMode="NoResize"
+WindowStyle="ToolWindow"
         mc:Ignorable="d"
-        Title="New Question Pack" Height="220" Width="200" ResizeMode="NoResize">
+        Title="New Question Pack" Height="225" Width="200">
 
     
         <StackPanel Margin="5">
@@ -16,14 +18,15 @@
         <ComboBox x:Name="difficultyComboBox" Text="{Binding Difficulty}"/>
         <StackPanel Orientation="Horizontal" >
             <Label Content="Time Limit:" FontWeight="Bold"/>
-            <Label Content="{Binding TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
+            <Label Content="{Binding ActivePack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
         </StackPanel>
-            
+
         <Slider x:Name="timeSlider"
               Minimum="0"
               Maximum="120"
-              Value="{Binding TimeLimitInSeconds}"
+              Value="{Binding ActivePack.TimeLimitInSeconds}"
               IsSnapToTickEnabled="true"
+                TickFrequency="5"
           TickPlacement="BottomRight"
           />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

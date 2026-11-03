@@ -4,26 +4,37 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3.Dialogs"
+        ResizeMode="NoResize"
+        WindowStyle="ToolWindow"
         mc:Ignorable="d"
-        Title="Pack Options" Height="220" Width="200" ResizeMode="NoResize">
+        Title="Pack Options" Height="220" Width="200" >
     
     <StackPanel Margin="10 10 10 0">
     
         
         <Label Content="Pack Name:" FontWeight="Bold"/>
-        <TextBox Text="Default Question Pack"/>
+        <TextBox Text="{Binding ActivePack.Name}"/>
         <Label Content="Difficulty:" FontWeight="Bold"/>
-        <ComboBox x:Name="difficultyComboBox" />
-        <Label Content="Time Limit:" FontWeight="Bold"/>
+        <ComboBox ItemsSource="{Binding ActivePack.Difficulty}"
+                  SelectedItem="{Binding ActivePack.SelectedDifficulty}"
+                 DisplayMemberPath="Difficulty"
+                  >
+              
+             
+        </ComboBox>
+                  
+        <StackPanel Orientation="Horizontal" >
+            <Label Content="Time Limit:" FontWeight="Bold"/>
+            <Label Content="{Binding ActivePack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
+        </StackPanel>
         <Slider x:Name="timeSlider"
                 Minimum="0"
                 Maximum="120"
-                Value="25"
+                Value="{Binding ActivePack.TimeLimitInSeconds}"
+                TickFrequency="5"
                 IsSnapToTickEnabled="true"
             TickPlacement="BottomRight"
             />
-
-
 
     </StackPanel>
 </Window>

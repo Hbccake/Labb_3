@@ -10,14 +10,14 @@
     <Grid>
         <Menu>
             <MenuItem Header="_File">
-                <MenuItem Header="_New Question Pack" Icon="{fa:Icon FolderPlus}"/>
-                <MenuItem Header="_Select Question Pack" Icon="{fa:Icon FolderOpen}">                    <MenuItem Header="Samplepack"/>                </MenuItem>                <MenuItem Header="_Delete Question Pack" Icon="{fa:Icon FolderMinus}"/>                <MenuItem Header="_Import Questions" Icon="{fa:Icon FileImport}"/>
-                <MenuItem Header="E_xit" InputGestureText="Alt+F4" Icon="{fa:Icon SquareXmark}"/>
+                <MenuItem Header="_New Question Pack" Icon="{fa:Icon FolderPlus}" InputGestureText="Ctrl+N" Command="{Binding ConfigurationViewModel.OpenCreateNewPackDialogCommand}"/>
+                <MenuItem Header="_Select Question Pack" Icon="{fa:Icon FolderOpen}">                    <MenuItem Header="Samplepack"/>                </MenuItem>                <MenuItem Header="_Delete Question Pack" Icon="{fa:Icon FolderMinus}"/>                <MenuItem Header="_Import Questions" Icon="{fa:Icon FileImport}" InputGestureText="Ctrl+I"/>
+                <MenuItem Header="E_xit"  Icon="{fa:Icon SquareXmark}" InputGestureText="Alt+F4"/>
             </MenuItem>
             <MenuItem Header="_Edit">
-                <MenuItem Header="_Add Question" Icon="{fa:Icon Plus}"/>                <MenuItem Header="_Remove Question" Icon="{fa:Icon Minus}"/>                <MenuItem Header="Pack _Options" Icon="{fa:Icon Sliders}"/>
+                <MenuItem Header="_Add Question" Icon="{fa:Icon Plus}" InputGestureText="Insert"/>                <MenuItem Header="_Remove Question" Icon="{fa:Icon Minus}" InputGestureText="Delete"/>                <MenuItem Header="Pack _Options" Icon="{fa:Icon Sliders}" Command="{Binding ConfigurationViewModel.OpenPackOptionsDialogCommand}"/>
             </MenuItem>
-            <MenuItem Header="_View">                <MenuItem Header="_Play" Icon="{fa:Icon Play}"/>                <MenuItem Header="_Edit" Icon="{fa:Icon Gears}"/>                <MenuItem Header="_Fullscreen" Icon="{fa:Icon Expand}"/>            </MenuItem>
+            <MenuItem Header="_View">                <MenuItem Header="_Play" Icon="{fa:Icon Play}" InputGestureText="Ctrl+P"/>                <MenuItem Header="_Edit" Icon="{fa:Icon Gears}" InputGestureText="Ctrl+E"/>                <MenuItem Header="_Fullscreen" Icon="{fa:Icon Expand}" InputGestureText="Alt+Enter"/>            </MenuItem>
         </Menu>
     </Grid>
 </UserControl>

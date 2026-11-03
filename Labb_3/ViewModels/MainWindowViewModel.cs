@@ -1,5 +1,7 @@
-﻿using Labb_3.Models;
+﻿using Labb_3.Dialogs;
+using Labb_3.Models;
 using System.Collections.ObjectModel;
+using System.Windows;
 
 namespace Labb_3.ViewModels;
 
@@ -34,7 +36,34 @@ class MainWindowViewModel : ViewModelBase
 
         ActivePack = new QuestionPackViewModel(questionPack);
 
+        ConfigurationViewModel.OpenDialog += OpenDialog;
+    }
+
+
+    private Question _activeQuestion;
+    public Question ActiveQuestion
+    {
+        get => _activeQuestion;
+
+        set => SetProperty(ref _activeQuestion, value);
 
     }
+
+
+    private void OpenDialog(ConfigurationViewModel.DialogType dialogType)
+    {
+
+        Window dialog = dialogType switch
+        {
+            ConfigurationViewModel.DialogType.PackOptions => new PackOptionsDialog(),
+            ConfigurationViewModel.DialogType.CreateNewPack => new CreateNewPackDialog(),
+            _ => throw new NotImplementedException(),
+        };
+        dialog.DataContext = this;
+        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+        dialog.ShowDialog();
+
+    }
+
 
 }
