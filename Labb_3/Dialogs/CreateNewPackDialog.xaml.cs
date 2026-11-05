@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
 
 namespace Labb_3.Dialogs
 {
@@ -20,6 +10,17 @@ namespace Labb_3.Dialogs
         public CreateNewPackDialog()
         {
             InitializeComponent();
+            Loaded += (_, _) =>
+            {
+
+                textBox.Focus();
+                textBox.SelectAll();
+            };
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            DialogResult = true;
         }
     }
 }

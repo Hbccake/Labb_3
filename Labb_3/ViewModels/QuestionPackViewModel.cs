@@ -4,14 +4,16 @@ namespace Labb_3.ViewModels;
 
 class QuestionPackViewModel : ViewModelBase
 {
-
+    public ObservableCollection<Question> Questions { get; }
     private readonly QuestionPack _model;
 
     public QuestionPackViewModel(QuestionPack model)
     {
         _model = model;
         Questions = new ObservableCollection<Question>(_model.Questions);
+
     }
+
 
     public string Name
     {
@@ -44,7 +46,9 @@ class QuestionPackViewModel : ViewModelBase
         }
     }
 
-    public ObservableCollection<Question> Questions { get; }
+
+
+
 
 
 }

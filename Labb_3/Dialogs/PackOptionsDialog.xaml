@@ -4,10 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3.Dialogs"
+        
         ResizeMode="NoResize"
         WindowStyle="ToolWindow"
         mc:Ignorable="d"
         Title="Pack Options" Height="220" Width="200" >
+   
     
     <StackPanel Margin="10 10 10 0">
     
@@ -15,9 +17,10 @@
         <Label Content="Pack Name:" FontWeight="Bold"/>
         <TextBox Text="{Binding ActivePack.Name}"/>
         <Label Content="Difficulty:" FontWeight="Bold"/>
-        <ComboBox ItemsSource="{Binding ActivePack.Difficulty}"
-                  SelectedItem="{Binding ActivePack.SelectedDifficulty}"
-                 DisplayMemberPath="Difficulty"
+        <ComboBox 
+            ItemsSource="{Binding ConfigurationViewModel.Difficulties}"
+                  SelectedValue="{Binding ConfigurationViewModel.SelectedDifficulty}"
+
                   >
               
              

@@ -16,26 +16,38 @@ class ConfigurationViewModel : ViewModelBase
 
     public RelayCommand AddQuestionCommand { get; }
     public RelayCommand RemoveQuestionCommand { get; }
+
     //public bool IsSelectedQuestion => SelectedQuestion != null;
+
     public Difficulty SelectedDifficulty
     {
-        get => _mainWindowViewModel.ActivePack.Difficulty;
+        get => ActivePack.Difficulty;
         set
         {
-            _mainWindowViewModel.ActivePack.Difficulty = value;
+            ActivePack.Difficulty = value;
+
             RaisePropertyChanged();
         }
     }
+    public Array Difficulties
+    {
+        get => Enum.GetValues(typeof(Difficulty));
+    }
+
     private Question _selectedQuestion;
     public Question SelectedQuestion
     {
         get => _selectedQuestion;
 
-        set => SetProperty(ref _selectedQuestion, value);
+        set
+        {
+            _selectedQuestion = value;
+            RaisePropertyChanged();
+
+        }
 
     }
 
-    public event Action<DialogType> OpenDialog;
     public RelayCommand OpenPackOptionsDialogCommand { get; }
     public RelayCommand OpenCreateNewPackDialogCommand { get; }
 
@@ -43,19 +55,26 @@ class ConfigurationViewModel : ViewModelBase
     {
         _mainWindowViewModel = mainWindowViewModel;
 
-        OpenPackOptionsDialogCommand = new RelayCommand(_ => RaiseOpenSettings(DialogType.PackOptions));
-        OpenCreateNewPackDialogCommand = new RelayCommand(_ => RaiseOpenSettings(DialogType.CreateNewPack));
+        OpenPackOptionsDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.PackOptions));
+        OpenCreateNewPackDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.CreateNewPack));
         AddQuestionCommand = new RelayCommand(_ => AddNewQuestion());
+        RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion());
+
     }
-    private void RaiseOpenSettings(DialogType dialogtype)
+    public event Action<DialogType> OpenDialog;
+    private void RaiseOpenDialog(DialogType dialogtype)
     {
         OpenDialog?.Invoke(dialogtype);
     }
 
     private void AddNewQuestion()
     {
-
-        ActivePack.Questions.Add(new Question("", "", "", "", ""));
-
+        ActivePack?.Questions.Add(new Question("", "", "", "", ""));
     }
+
+    private void RemoveQuestion()
+    {
+        ActivePack?.Questions.Remove(SelectedQuestion);
+    }
+
 }

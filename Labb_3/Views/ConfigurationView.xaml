@@ -26,9 +26,11 @@
                     Command="{Binding OpenPackOptionsDialogCommand}"
                     />
             <Button Margin="3" Content="{fa:Icon Plus}"
-                    
+                    Command="{Binding AddQuestionCommand}"
                     />
-            <Button Margin="3 " Content="{fa:Icon Minus}"/>
+            <Button Margin="3 " Content="{fa:Icon Minus}"
+                    Command="{Binding RemoveQuestionCommand}"
+                    />
 
         </StackPanel>
 
@@ -39,7 +41,6 @@
                  >
             <ListBox.ItemTemplate>
                 <DataTemplate>
-
                     <StackPanel Orientation="Vertical">
                         <TextBlock Margin="3 0" Text="Question:" FontWeight="Bold"/>
                         <TextBlock Margin="3 0" Text="{Binding Query}"/>

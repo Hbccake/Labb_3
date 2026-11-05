@@ -11,13 +11,13 @@
         <KeyBinding  Key="N" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.OpenCreateNewPackDialogCommand}"/>
         <KeyBinding  Key="I" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
-        <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>
         <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Enter" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
     </Window.InputBindings>
-    
+
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
