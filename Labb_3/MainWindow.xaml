@@ -13,7 +13,7 @@
         <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>
         <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
-        <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding StartQuizCommand}"/>
         <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Enter" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
     </Window.InputBindings>
@@ -26,8 +26,8 @@
         
         
         <views:MenuView Grid.Row="0"/>
-        <!--<views:PlayerView Grid.Row="1"/>-->
-        <views:ConfigurationView Grid.Row="1"/>
+        <views:PlayerView Grid.Row="1"/>
+        <!--<views:ConfigurationView Grid.Row="1"/>-->
         <!--<views:QuizEndView/>-->
     </Grid>
 </Window>

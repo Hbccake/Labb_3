@@ -12,21 +12,11 @@ namespace Labb_3.ViewModels;
 class MainWindowViewModel : ViewModelBase
 {
 
-    public ObservableCollection<QuestionPackViewModel> Packs { get; set; } = new();
-    public RelayCommand CreateNewPackCommand { get; }
-    public RelayCommand SelectQuestionPackCommand { get; }
-    public RelayCommand DeleteQuestionPackCommand { get; }
-    private QuestionPackViewModel _selectedPack { get; set; }
-    public QuestionPackViewModel SelectedPack
-    {
-        get => _selectedPack;
+    public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
 
-        set
-        {
-            _selectedPack = value;
-            RaisePropertyChanged();
-        }
-    }
+    public RelayCommand StartQuizCommand { get; }
+
+
 
     private QuestionPackViewModel _activePack;
     public QuestionPackViewModel ActivePack
@@ -36,46 +26,17 @@ class MainWindowViewModel : ViewModelBase
         {
             if (SetProperty(ref _activePack, value))
                 ConfigurationViewModel?.RaiseActivePackChanged();
-
+            PlayerViewModel?.RaiseActivePackChanged();
         }
     }
-    private QuestionPackViewModel _newPack;
-    public QuestionPackViewModel NewPack
+
+
+    private Question _activeQuestion;
+    public Question ActiveQuestion
     {
-        get => _newPack;
-        set
-        {
-            _newPack = value;
+        get => _activeQuestion;
 
-        }
-
-    }
-    //public Array MessageBoxButtons
-    //{
-    //    get => Enum.GetValues(typeof(MessageBoxButton));
-    //}
-
-    private void DeletePack()
-    {
-        //var message = $"Are you sure you want to delete {ActivePack.Name}";
-        //MessageBoxButtons buttons = MessageBoxButtons.YesNo;
-        //var result = MessageBox.Show($"Are you sure you want to delete {ActivePack.Name}", buttons);
-        //if (result == MessageBoxResult.Yes)
-
-
-        ActivePack = SelectedPack;
-        Packs.Remove(SelectedPack);
-        RaisePropertyChanged();
-
-    }
-
-    private void CreateNewPack()
-    {
-
-        var newPack = new QuestionPackViewModel(new QuestionPack(NewPack.Name));
-        ActivePack = newPack;
-
-        Packs.Add(newPack);
+        set => SetProperty(ref _activeQuestion, value);
 
     }
 
@@ -92,41 +53,37 @@ class MainWindowViewModel : ViewModelBase
         questionPack.Questions.Add(new Question("Vad är 2 + 3?", "5", "10", "8", "1"));
 
         ActivePack = new QuestionPackViewModel(questionPack);
-
         Packs.Add(ActivePack);
+        ConfigurationViewModel.ActivePack = ActivePack;
 
-        CreateNewPackCommand = new RelayCommand(_ => CreateNewPack());
-        DeleteQuestionPackCommand = new RelayCommand(_ => DeletePack());
-        SelectQuestionPackCommand = new RelayCommand(SelectedQuestionPack);
+
+
         ConfigurationViewModel.OpenDialog += OpenDialog;
 
+
+        StartQuizCommand = new RelayCommand(_ => StartQuiz());
+
     }
 
-    private void SelectedQuestionPack(object? obj)
+    public void SetActivePack(QuestionPackViewModel? setPack)
     {
-        if (obj is QuestionPackViewModel selectedPack)
-        {
-            SelectedPack = selectedPack;
-            ActivePack = SelectedPack;
-
-        }
+        if (setPack is not null) ActivePack = setPack;
     }
 
-    private Question _activeQuestion;
-    public Question ActiveQuestion
+
+    private void StartQuiz()
     {
-        get => _activeQuestion;
-
-        set => SetProperty(ref _activeQuestion, value);
+        PlayerViewModel.ShuffleQuestion();
+        PlayerViewModel.NextQuestion();
+        PlayerViewModel.StartTimer();
 
     }
-
 
     private void OpenDialog(ConfigurationViewModel.DialogType dialogType)
     {
         if (dialogType == ConfigurationViewModel.DialogType.CreateNewPack)
         {
-            NewPack = new QuestionPackViewModel(new QuestionPack("<PackName>"));
+            ConfigurationViewModel?.NewPack = new QuestionPackViewModel(new QuestionPack("<PackName>"));
         }
 
         Window dialog = dialogType switch
