@@ -1,5 +1,4 @@
-﻿using Labb_3.Command;
-using Labb_3.Dialogs;
+﻿using Labb_3.Dialogs;
 using Labb_3.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -14,10 +13,6 @@ class MainWindowViewModel : ViewModelBase
 
     public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
 
-    public RelayCommand StartQuizCommand { get; }
-
-
-
     private QuestionPackViewModel _activePack;
     public QuestionPackViewModel ActivePack
     {
@@ -28,16 +23,6 @@ class MainWindowViewModel : ViewModelBase
                 ConfigurationViewModel?.RaiseActivePackChanged();
             PlayerViewModel?.RaiseActivePackChanged();
         }
-    }
-
-
-    private Question _activeQuestion;
-    public Question ActiveQuestion
-    {
-        get => _activeQuestion;
-
-        set => SetProperty(ref _activeQuestion, value);
-
     }
 
 
@@ -60,9 +45,6 @@ class MainWindowViewModel : ViewModelBase
 
         ConfigurationViewModel.OpenDialog += OpenDialog;
 
-
-        StartQuizCommand = new RelayCommand(_ => StartQuiz());
-
     }
 
     public void SetActivePack(QuestionPackViewModel? setPack)
@@ -71,13 +53,7 @@ class MainWindowViewModel : ViewModelBase
     }
 
 
-    private void StartQuiz()
-    {
-        PlayerViewModel.ShuffleQuestion();
-        PlayerViewModel.NextQuestion();
-        PlayerViewModel.StartTimer();
 
-    }
 
     private void OpenDialog(ConfigurationViewModel.DialogType dialogType)
     {

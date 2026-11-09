@@ -56,13 +56,21 @@
 
         <StackPanel  Grid.Row="1" Margin="5">
             <StackPanel  Margin="10"  Orientation="Horizontal"  HorizontalAlignment="Center"  VerticalAlignment="Top">
-                <Button Content="{Binding Answer1}" Margin="5" Height="70" Width="200"/>
-                <Button Content="{Binding Answer2}" Margin="5" Height="70" Width="200"/>
+                <Button Content="{Binding ShuffledAnswers[0].Answer}" 
+                        Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
+                        CommandParameter="{Binding ShuffledAnswers[0].Answer}"/>
+                <Button Content="{Binding ShuffledAnswers[1].Answer}" 
+                        Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
+                        CommandParameter="{Binding ShuffledAnswers[1].Answer}"/>
             </StackPanel>
         <StackPanel  Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" >
 
-                <Button Content="{Binding Answer3}" Margin="5" Height="70" Width="200"/>
-                <Button Content="{Binding Answer4}" Margin="5" Height="70" Width="200"/>
+                <Button Content="{Binding ShuffledAnswers[2].Answer}" 
+                        Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
+                        CommandParameter="{Binding ShuffledAnswers[2].Answer}"/>
+                <Button Content="{Binding ShuffledAnswers[3].Answer}" 
+                        Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
+                        CommandParameter="{Binding ShuffledAnswers[3].Answer}"/>
             </StackPanel>
 
         </StackPanel>

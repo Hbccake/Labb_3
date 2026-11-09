@@ -44,9 +44,9 @@ class ConfigurationViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
-    public Array Difficulties
+    public Difficulty[] Difficulties
     {
-        get => Enum.GetValues(typeof(Difficulty));
+        get => Enum.GetValues<Difficulty>();
     }
     private QuestionPackViewModel _selectedPack { get; set; }
     public QuestionPackViewModel SelectedPack
@@ -107,6 +107,12 @@ class ConfigurationViewModel : ViewModelBase
 
     private void AddNewQuestion()
     {
+        if (ActivePack.Questions.Any(question => !question.HasValidAnswers))
+        {
+            MessageBox.Show("Complete the current question with one correct and three incorrect answers before continuing", "Incomplete Question", MessageBoxButton.OK);
+            return;
+        }
+
         ActivePack?.Questions.Add(new Question("", "", "", "", ""));
     }
 

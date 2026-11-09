@@ -10,8 +10,8 @@
     <Grid>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
             <Label Content="Complete!" HorizontalAlignment="Center" FontSize="40"/>
-            <TextBlock Text="You got * out of * answers correct!" FontSize="20"/>
-            <Button Margin="10" Width="100" Height="30">
+            <TextBlock Text="{Binding PlayerViewModel.ScoreCounter}" FontSize="20"/>
+            <Button Margin="10" Width="100" Height="30" Command="{Binding StartQuizCommand}">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                     <Label Content="{fa:Icon Rotate}" FontSize="15" />
                 <TextBlock Text="Restart" Margin="3" FontSize="15"/>

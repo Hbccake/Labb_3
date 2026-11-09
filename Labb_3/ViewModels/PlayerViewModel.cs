@@ -1,25 +1,26 @@
 ﻿using Labb_3.Command;
 using Labb_3.Models;
 using System.Diagnostics;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Labb_3.ViewModels;
 
 class PlayerViewModel : ViewModelBase
 {
-    string _answer1;
-    string _answer2;
-    string _answer3;
-    string _answer4;
+
     private readonly Random _random = new();
-    public RelayCommand AnswerHandlerCommand { get; }
+    public RelayCommand StartQuizCommand { get; }
+    public AsyncRelayCommand AnswerHandlerCommand { get; }
+    public string ScoreCounter => $"You got {_currentScore} out of {_mainWindowViewModel?.ActivePack.Questions.Count} answers correct!";
+    private List<ShuffleAnswers> _shuffledAnswers = new();
+    public List<ShuffleAnswers> ShuffledAnswers => _shuffledAnswers;
 
     private readonly MainWindowViewModel? _mainWindowViewModel;
     public QuestionPackViewModel? ActivePack { get => _mainWindowViewModel?.ActivePack; }
     public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
-    private List<Question> _shuffledQuestions;
+    private List<Question> _shuffledQuestions = new();
     private int _currentQuestionIndex;
+    private int _currentScore;
     public string QuestionCount => $"Question {_currentQuestionIndex} of {_mainWindowViewModel?.ActivePack.Questions.Count}";
     public Question _currentQuestion;
     public Question CurrentQuestion
@@ -32,6 +33,52 @@ class PlayerViewModel : ViewModelBase
             RaisePropertyChanged(nameof(QuestionCount));
         }
     }
+    private bool IsCorrectAnswer(string selectedAnswer)
+    {
+        ShuffleAnswers answer = _shuffledAnswers.First(option => option.Answer == selectedAnswer);
+        return answer.IsCorrect;
+    }
+    private void StartQuiz()
+    {
+        if (ActivePack is null || ActivePack.Questions.Count == 0) return;
+        timer.Stop();
+        _currentScore = 0;
+        _currentQuestionIndex = 0;
+
+        _shuffledQuestions = ActivePack.Questions.ToList();
+        Shuffle(_shuffledQuestions);
+
+        NextQuestion();
+        StartTimer();
+
+    }
+    public string SelectedAnswer
+    {
+        get => _selectedAnswer;
+        set
+        {
+            _selectedAnswer = value;
+            RaisePropertyChanged();
+        }
+    }
+    public string WrongAnswerButton
+    {
+        get => _wrongAnswerButton;
+        set
+        {
+            _wrongAnswerButton = value;
+            RaisePropertyChanged();
+        }
+    }
+    public string CorrectAnswerButton
+    {
+        get => _correctAnswerButton;
+        set
+        {
+            _correctAnswerButton = value;
+            RaisePropertyChanged();
+        }
+    }
 
     public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
     {
@@ -41,59 +88,43 @@ class PlayerViewModel : ViewModelBase
         timer.Interval = TimeSpan.FromSeconds(1);
         timer.Tick += Timer_Tick;
         stopwatch = new Stopwatch();
+
         _shuffledQuestions = new List<Question>();
-        AnswerHandlerCommand = new RelayCommand(_ => AnswerHandler());
-    }
-    private SolidColorBrush _buttonColour = new SolidColorBrush(Colors.LightGray);
-    public SolidColorBrush ButtonColour
-    {
-        get => _buttonColour;
-        set
-        {
-            _buttonColour = value;
-            RaisePropertyChanged();
-        }
+        StartQuizCommand = new RelayCommand(_ => StartQuiz());
+        AnswerHandlerCommand = new AsyncRelayCommand(parameter => AnswerHandler(parameter?.ToString() ?? string.Empty));
     }
 
 
-    private void AnswerHandler()
-    {
-        if (SelectedAnswer == CurrentQuestion.CorrectAnswer)
-        {
 
+    private async Task AnswerHandler(string selectedAnswer)
+    {
+
+
+        if (IsCorrectAnswer(selectedAnswer))
+        {
+            _currentScore++;
+            CorrectAnswerButton = selectedAnswer;
         }
         else
         {
+            WrongAnswerButton = selectedAnswer;
+            CorrectAnswerButton = _shuffledAnswers.First(option => option.IsCorrect).Answer;
+        }
+        await Task.Delay(1000);
+        NextQuestion();
+    }
 
+    public struct ShuffleAnswers
+    {
+
+        public string Answer { get; }
+        public bool IsCorrect { get; }
+        public ShuffleAnswers(string answer, bool iscorrect)
+        {
+            Answer = answer;
+            IsCorrect = iscorrect;
         }
 
-
-    }
-
-    public void ShuffleQuestion()
-    {
-        if (ActivePack?.Questions is null) return;
-
-        _shuffledQuestions = ActivePack.Questions.ToList();
-        Shuffle(_shuffledQuestions);
-        _currentQuestionIndex = 0;
-
-    }
-    public void ShuffleAnswer(Question current)
-    {
-        var answerList = new List<string>
-        {
-            current.CorrectAnswer,
-            current.IncorrectAnswers[0],
-            current.IncorrectAnswers[1],
-            current.IncorrectAnswers[2]
-        };
-
-        Shuffle(answerList);
-        Answer1 = answerList[0];
-        Answer2 = answerList[1];
-        Answer3 = answerList[2];
-        Answer4 = answerList[3];
     }
 
     private void Shuffle<T>(List<T> items)
@@ -106,8 +137,8 @@ class PlayerViewModel : ViewModelBase
     }
 
 
-    public DispatcherTimer timer;
-    public Stopwatch stopwatch;
+    private DispatcherTimer timer;
+    private Stopwatch stopwatch;
     private TimeSpan countdownTime;
     public void StartTimer()
     {
@@ -133,6 +164,10 @@ class PlayerViewModel : ViewModelBase
         RemainingTime = (int)remainingTime.TotalSeconds;
     }
     private int _remainingTime;
+    private string _selectedAnswer;
+    private string _wrongAnswerButton;
+    private string _correctAnswerButton;
+
     public int RemainingTime
     {
         get => _remainingTime;
@@ -150,47 +185,21 @@ class PlayerViewModel : ViewModelBase
             return;
         }
         CurrentQuestion = _shuffledQuestions[_currentQuestionIndex++];
-        ShuffleAnswer(CurrentQuestion);
+        _shuffledAnswers = [
+            new ShuffleAnswers(CurrentQuestion.CorrectAnswer,true),
+            new ShuffleAnswers(CurrentQuestion.IncorrectAnswers[0], false),
+            new ShuffleAnswers(CurrentQuestion.IncorrectAnswers[1], false),
+            new ShuffleAnswers(CurrentQuestion.IncorrectAnswers[2], false)
+            ];
+        Shuffle(ShuffledAnswers);
 
 
+        RaisePropertyChanged(nameof(ShuffledAnswers));
         RaisePropertyChanged(nameof(QuestionCount));
     }
 
 
-    public string Answer1
-    {
-        get => _answer1;
-        set
-        {
-            _answer1 = value;
-            RaisePropertyChanged();
-        }
-    }
-    public string Answer2
-    {
-        get => _answer2;
-        set
-        {
-            _answer2 = value;
-            RaisePropertyChanged();
-        }
-    }
-    public string Answer3
-    {
-        get => _answer3;
-        set
-        {
-            _answer3 = value;
-            RaisePropertyChanged();
-        }
-    }
-    public string Answer4
-    {
-        get => _answer4;
-        set
-        {
-            _answer4 = value;
-            RaisePropertyChanged();
-        }
-    }
+
+
+
 }
