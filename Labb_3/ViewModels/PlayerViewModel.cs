@@ -40,10 +40,14 @@ class PlayerViewModel : ViewModelBase
     }
     private void StartQuiz()
     {
+
         if (ActivePack is null || ActivePack.Questions.Count == 0) return;
+        _mainWindowViewModel.ShowPlayerView();
+        RaisePropertyChanged(nameof(ScoreCounter));
         timer.Stop();
         _currentScore = 0;
         _currentQuestionIndex = 0;
+        HasAnswered = false;
 
         _shuffledQuestions = ActivePack.Questions.ToList();
         Shuffle(_shuffledQuestions);
@@ -52,33 +56,14 @@ class PlayerViewModel : ViewModelBase
         StartTimer();
 
     }
-    public string SelectedAnswer
+    private string? _selectedAnswer;
+    public string? SelectedAnswer
     {
         get => _selectedAnswer;
-        set
-        {
-            _selectedAnswer = value;
-            RaisePropertyChanged();
-        }
+        set => SetProperty(ref _selectedAnswer, value);
+
     }
-    public string WrongAnswerButton
-    {
-        get => _wrongAnswerButton;
-        set
-        {
-            _wrongAnswerButton = value;
-            RaisePropertyChanged();
-        }
-    }
-    public string CorrectAnswerButton
-    {
-        get => _correctAnswerButton;
-        set
-        {
-            _correctAnswerButton = value;
-            RaisePropertyChanged();
-        }
-    }
+
 
     public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
     {
@@ -94,25 +79,30 @@ class PlayerViewModel : ViewModelBase
         AnswerHandlerCommand = new AsyncRelayCommand(parameter => AnswerHandler(parameter?.ToString() ?? string.Empty));
     }
 
-
+    private bool _hasAnswered;
+    public bool HasAnswered
+    {
+        get => _hasAnswered;
+        set => SetProperty(ref _hasAnswered, value);
+    }
 
     private async Task AnswerHandler(string selectedAnswer)
     {
-
+        if (HasAnswered) return;
+        SelectedAnswer = selectedAnswer;
+        HasAnswered = true;
 
         if (IsCorrectAnswer(selectedAnswer))
         {
             _currentScore++;
-            CorrectAnswerButton = selectedAnswer;
+            RaisePropertyChanged(nameof(ScoreCounter));
+
         }
-        else
-        {
-            WrongAnswerButton = selectedAnswer;
-            CorrectAnswerButton = _shuffledAnswers.First(option => option.IsCorrect).Answer;
-        }
+
         await Task.Delay(1000);
         NextQuestion();
     }
+    public string CorrectAnswer => _shuffledAnswers.FirstOrDefault(answer => answer.IsCorrect).Answer;
 
     public struct ShuffleAnswers
     {
@@ -124,7 +114,7 @@ class PlayerViewModel : ViewModelBase
             Answer = answer;
             IsCorrect = iscorrect;
         }
-
+        public string Image => IsCorrect ? "/Assets/Correct.png" : "/Assets/Incorrect.png";
     }
 
     private void Shuffle<T>(List<T> items)
@@ -159,14 +149,14 @@ class PlayerViewModel : ViewModelBase
             timer.Stop();
             stopwatch.Stop();
             RemainingTime = 0;
+            _mainWindowViewModel.EndQuiz();
             return;
         }
         RemainingTime = (int)remainingTime.TotalSeconds;
     }
     private int _remainingTime;
-    private string _selectedAnswer;
-    private string _wrongAnswerButton;
-    private string _correctAnswerButton;
+
+
 
     public int RemainingTime
     {
@@ -180,10 +170,16 @@ class PlayerViewModel : ViewModelBase
 
     public void NextQuestion()
     {
+        stopwatch.Reset();
         if (_currentQuestionIndex >= _shuffledQuestions.Count)
         {
+            timer.Stop();
+
+            _mainWindowViewModel.EndQuiz();
             return;
         }
+        HasAnswered = false;
+        SelectedAnswer = null;
         CurrentQuestion = _shuffledQuestions[_currentQuestionIndex++];
         _shuffledAnswers = [
             new ShuffleAnswers(CurrentQuestion.CorrectAnswer,true),
@@ -196,6 +192,7 @@ class PlayerViewModel : ViewModelBase
 
         RaisePropertyChanged(nameof(ShuffledAnswers));
         RaisePropertyChanged(nameof(QuestionCount));
+
     }
 
 

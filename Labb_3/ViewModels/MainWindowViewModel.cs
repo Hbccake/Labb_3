@@ -11,7 +11,42 @@ namespace Labb_3.ViewModels;
 class MainWindowViewModel : ViewModelBase
 {
 
+
     public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
+
+    private bool _showEndView;
+    public bool ShowEndView
+    {
+        get => _showEndView;
+        set
+        {
+            if (SetProperty(ref _showEndView, value))
+                RaisePropertyChanged(nameof(IsConfigurationViewVisible));
+        }
+    }
+
+    private bool _isActiveQuiz;
+    public bool IsActiveQuiz
+    {
+        get => _isActiveQuiz;
+        set
+        {
+            if (SetProperty(ref _isActiveQuiz, value))
+                RaisePropertyChanged(nameof(IsConfigurationViewVisible));
+        }
+    }
+    public bool IsConfigurationViewVisible => !IsActiveQuiz && !ShowEndView;
+    public void ShowPlayerView()
+    {
+        ShowEndView = false;
+        IsActiveQuiz = true;
+    }
+    public void EndQuiz()
+    {
+
+        IsActiveQuiz = false;
+        ShowEndView = true;
+    }
 
     private QuestionPackViewModel _activePack;
     public QuestionPackViewModel ActivePack

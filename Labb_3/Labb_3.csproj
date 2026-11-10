@@ -8,8 +8,22 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
 
+
+
   <ItemGroup>
     <PackageReference Include="FontAwesome.Sharp" Version="6.6.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Resource Include="Assets\Correct.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Incorrect.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Converters\"/>
+	</ItemGroup>
 </Project>

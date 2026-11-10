@@ -17,7 +17,7 @@
             <MenuItem Header="_Edit">
                 <MenuItem Header="_Add Question" Icon="{fa:Icon Plus}" InputGestureText="Insert" Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>                <MenuItem Header="_Remove Question" Icon="{fa:Icon Minus}" InputGestureText="Delete" Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}"/>                <MenuItem Header="Pack _Options" Icon="{fa:Icon Sliders}" Command="{Binding ConfigurationViewModel.OpenPackOptionsDialogCommand}"/>
             </MenuItem>
-            <MenuItem Header="_View">                <MenuItem Header="_Play" Icon="{fa:Icon Play}" InputGestureText="Ctrl+P" Command="{Binding PlayerViewModel.StartQuizCommand}"/>                <MenuItem Header="_Edit" Icon="{fa:Icon Gears}" InputGestureText="Ctrl+E"/>                <MenuItem Header="_Fullscreen" Icon="{fa:Icon Expand}" InputGestureText="Alt+Enter"/>            </MenuItem>
+            <MenuItem Header="_View">                <MenuItem Header="_Play" Icon="{fa:Icon Play}" InputGestureText="Ctrl+P" Command="{Binding PlayerViewModel.StartQuizCommand}"   />                <MenuItem Header="_Edit" Icon="{fa:Icon Gears}" InputGestureText="Ctrl+E"/>                <MenuItem Header="_Fullscreen" Icon="{fa:Icon Expand}" InputGestureText="Alt+Enter"/>            </MenuItem>
         </Menu>
     </Grid>
 </UserControl>

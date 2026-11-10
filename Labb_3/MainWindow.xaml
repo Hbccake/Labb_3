@@ -12,22 +12,32 @@
         <KeyBinding  Key="I" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>
-        <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}"/>
         <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding PlayerViewModel.StartQuizCommand}"/>
         <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Enter" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
     </Window.InputBindings>
 
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+    </Window.Resources>
+    
     <Grid ShowGridLines="False">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
+      
         
         <views:MenuView Grid.Row="0"/>
-        <views:PlayerView Grid.Row="1"/>
-        <!--<views:ConfigurationView Grid.Row="1"/>-->
-        <!--<views:QuizEndView/>-->
+        <views:PlayerView Grid.Row="1" Visibility="{Binding DataContext.IsActiveQuiz, 
+            RelativeSource={RelativeSource AncestorType={x:Type Window}},
+            Converter={StaticResource BooleanToVisibility}}"/>
+        <views:ConfigurationView Grid.Row="1" Visibility="{Binding DataContext.IsConfigurationViewVisible,
+            RelativeSource={RelativeSource AncestorType={x:Type Window}},
+            Converter={StaticResource BooleanToVisibility}}"/>
+        <views:QuizEndView Grid.Row="1" Visibility="{Binding DataContext.ShowEndView,
+            RelativeSource={RelativeSource AncestorType={x:Type Window}},
+            Converter={StaticResource BooleanToVisibility}}"/>
     </Grid>
 </Window>
