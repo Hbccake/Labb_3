@@ -9,26 +9,25 @@
         WindowStyle="ToolWindow"
         mc:Ignorable="d"
         Title="Pack Options" Height="220" Width="200" >
-   
-    
+
+
     <StackPanel Margin="10 10 10 0">
-    
-        
+
+
         <Label Content="Pack Name:" FontWeight="Bold"/>
-        <TextBox Text="{Binding ActivePack.Name}"/>
+        <TextBox x:Name="textBox" Text="{Binding ActivePack.Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
         <Label Content="Difficulty:" FontWeight="Bold"/>
         <ComboBox 
             ItemsSource="{Binding ConfigurationViewModel.Difficulties}"
-                  SelectedValue="{Binding ConfigurationViewModel.SelectedDifficulty}"
+            SelectedValue="{Binding ConfigurationViewModel.SelectedDifficulty}">
 
-                  >
-              
-             
         </ComboBox>
-                  
         <StackPanel Orientation="Horizontal" >
-            <Label Content="Time Limit:" FontWeight="Bold"/>
-            <Label Content="{Binding ActivePack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
+            <Label Content="Time Limit:" 
+                   FontWeight="Bold"/>
+            <Label Content="{Binding ActivePack.TimeLimitInSeconds, Mode=OneWay}" 
+                   Margin="50 0 " 
+                   VerticalAlignment="Center"/>
         </StackPanel>
         <Slider x:Name="timeSlider"
                 Minimum="0"
@@ -36,7 +35,7 @@
                 Value="{Binding ActivePack.TimeLimitInSeconds}"
                 TickFrequency="5"
                 IsSnapToTickEnabled="true"
-            TickPlacement="BottomRight"
+                TickPlacement="BottomRight"
             />
 
     </StackPanel>

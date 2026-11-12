@@ -6,9 +6,11 @@
         xmlns:local="clr-namespace:Labb_3"
         xmlns:views="clr-namespace:Labb_3.Views"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Window.InputBindings>
         <KeyBinding  Key="N" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.OpenCreateNewPackDialogCommand}"/>
+        <KeyBinding  Key="O" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.LoadQuestionPackCommand}"/>
+        <KeyBinding  Key="S" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.SaveQuestionPackCommand}"/>
         <KeyBinding  Key="I" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
         <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>
@@ -35,7 +37,7 @@
             Converter={StaticResource BooleanToVisibility}}"/>
         <views:ConfigurationView Grid.Row="1" Visibility="{Binding DataContext.IsConfigurationViewVisible,
             RelativeSource={RelativeSource AncestorType={x:Type Window}},
-            Converter={StaticResource BooleanToVisibility}}"/>
+            Converter={StaticResource BooleanToVisibility}}" />
         <views:QuizEndView Grid.Row="1" Visibility="{Binding DataContext.ShowEndView,
             RelativeSource={RelativeSource AncestorType={x:Type Window}},
             Converter={StaticResource BooleanToVisibility}}"/>

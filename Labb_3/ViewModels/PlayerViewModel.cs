@@ -7,21 +7,27 @@ namespace Labb_3.ViewModels;
 
 class PlayerViewModel : ViewModelBase
 {
-
+    private readonly MainWindowViewModel? _mainWindowViewModel;
+    public QuestionPackViewModel? ActivePack { get => _mainWindowViewModel?.ActivePack; }
+    public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
     private readonly Random _random = new();
     public RelayCommand StartQuizCommand { get; }
     public AsyncRelayCommand AnswerHandlerCommand { get; }
     public string ScoreCounter => $"You got {_currentScore} out of {_mainWindowViewModel?.ActivePack.Questions.Count} answers correct!";
-    private List<ShuffleAnswers> _shuffledAnswers = new();
+    public string QuestionCount => $"Question {_currentQuestionIndex} of {_mainWindowViewModel?.ActivePack.Questions.Count}";
+    private List<ShuffleAnswers> _shuffledAnswers = [
+        new ShuffleAnswers(string.Empty,false),
+        new ShuffleAnswers(string.Empty,false),
+        new ShuffleAnswers(string.Empty,false),
+        new ShuffleAnswers(string.Empty,false)
+
+        ];
     public List<ShuffleAnswers> ShuffledAnswers => _shuffledAnswers;
 
-    private readonly MainWindowViewModel? _mainWindowViewModel;
-    public QuestionPackViewModel? ActivePack { get => _mainWindowViewModel?.ActivePack; }
-    public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
     private List<Question> _shuffledQuestions = new();
     private int _currentQuestionIndex;
     private int _currentScore;
-    public string QuestionCount => $"Question {_currentQuestionIndex} of {_mainWindowViewModel?.ActivePack.Questions.Count}";
+
     public Question _currentQuestion;
     public Question CurrentQuestion
     {
@@ -40,7 +46,6 @@ class PlayerViewModel : ViewModelBase
     }
     private void StartQuiz()
     {
-
         if (ActivePack is null || ActivePack.Questions.Count == 0) return;
         _mainWindowViewModel.ShowPlayerView();
         RaisePropertyChanged(nameof(ScoreCounter));
@@ -61,9 +66,7 @@ class PlayerViewModel : ViewModelBase
     {
         get => _selectedAnswer;
         set => SetProperty(ref _selectedAnswer, value);
-
     }
-
 
     public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
     {
@@ -85,7 +88,6 @@ class PlayerViewModel : ViewModelBase
         get => _hasAnswered;
         set => SetProperty(ref _hasAnswered, value);
     }
-
     private async Task AnswerHandler(string selectedAnswer)
     {
         if (HasAnswered) return;
@@ -99,14 +101,13 @@ class PlayerViewModel : ViewModelBase
 
         }
 
-        await Task.Delay(1000);
+        await Task.Delay(3000);
         NextQuestion();
     }
     public string CorrectAnswer => _shuffledAnswers.FirstOrDefault(answer => answer.IsCorrect).Answer;
 
     public struct ShuffleAnswers
     {
-
         public string Answer { get; }
         public bool IsCorrect { get; }
         public ShuffleAnswers(string answer, bool iscorrect)
@@ -125,7 +126,6 @@ class PlayerViewModel : ViewModelBase
             (items[i], items[r]) = (items[r], items[i]);
         }
     }
-
 
     private DispatcherTimer timer;
     private Stopwatch stopwatch;
@@ -155,8 +155,6 @@ class PlayerViewModel : ViewModelBase
         RemainingTime = (int)remainingTime.TotalSeconds;
     }
     private int _remainingTime;
-
-
 
     public int RemainingTime
     {
@@ -194,9 +192,5 @@ class PlayerViewModel : ViewModelBase
         RaisePropertyChanged(nameof(QuestionCount));
 
     }
-
-
-
-
 
 }

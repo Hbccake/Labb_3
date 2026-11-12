@@ -10,6 +10,12 @@ namespace Labb_3.Dialogs
         public PackOptionsDialog()
         {
             InitializeComponent();
+            Loaded += (_, _) =>
+            {
+
+                textBox.Focus();
+                textBox.SelectAll();
+            };
         }
 
 

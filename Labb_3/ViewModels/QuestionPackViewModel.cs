@@ -13,8 +13,6 @@ class QuestionPackViewModel : ViewModelBase
         Questions = new ObservableCollection<Question>(_model.Questions);
 
     }
-
-
     public string Name
     {
         get => _model.Name;
@@ -45,10 +43,5 @@ class QuestionPackViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
-
-
-
-
-
 
 }

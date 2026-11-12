@@ -1,4 +1,5 @@
-﻿using Labb_3.Dialogs;
+﻿using Labb_3.Command;
+using Labb_3.Dialogs;
 using Labb_3.Models;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -10,32 +11,34 @@ namespace Labb_3.ViewModels;
 
 class MainWindowViewModel : ViewModelBase
 {
-
-
     public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
+    public RelayCommand ShowConfigurationViewCommand { get; }
 
     private bool _showEndView;
     public bool ShowEndView
     {
         get => _showEndView;
-        set
-        {
-            if (SetProperty(ref _showEndView, value))
-                RaisePropertyChanged(nameof(IsConfigurationViewVisible));
-        }
+        set => SetProperty(ref _showEndView, value);
+
     }
 
     private bool _isActiveQuiz;
     public bool IsActiveQuiz
     {
         get => _isActiveQuiz;
-        set
-        {
-            if (SetProperty(ref _isActiveQuiz, value))
-                RaisePropertyChanged(nameof(IsConfigurationViewVisible));
-        }
+        set => SetProperty(ref _isActiveQuiz, value);
+
     }
-    public bool IsConfigurationViewVisible => !IsActiveQuiz && !ShowEndView;
+
+
+    private bool _isConfigurationViewVisible;
+    public bool IsConfigurationViewVisible
+    {
+        get => _isConfigurationViewVisible;
+        set => SetProperty(ref _isConfigurationViewVisible, value);
+
+    }
+
     public void ShowPlayerView()
     {
         ShowEndView = false;
@@ -43,9 +46,14 @@ class MainWindowViewModel : ViewModelBase
     }
     public void EndQuiz()
     {
-
         IsActiveQuiz = false;
         ShowEndView = true;
+    }
+    public void ShowConfigurationView()
+    {
+        IsConfigurationViewVisible = true;
+        IsActiveQuiz = false;
+        ShowEndView = false;
     }
 
     private QuestionPackViewModel _activePack;
@@ -59,7 +67,6 @@ class MainWindowViewModel : ViewModelBase
             PlayerViewModel?.RaiseActivePackChanged();
         }
     }
-
 
     public PlayerViewModel? PlayerViewModel { get; }
     public ConfigurationViewModel? ConfigurationViewModel { get; }
@@ -75,10 +82,8 @@ class MainWindowViewModel : ViewModelBase
         ActivePack = new QuestionPackViewModel(questionPack);
         Packs.Add(ActivePack);
         ConfigurationViewModel.ActivePack = ActivePack;
-
-
-
         ConfigurationViewModel.OpenDialog += OpenDialog;
+        ShowConfigurationViewCommand = new RelayCommand(_ => ShowConfigurationView());
 
     }
 
@@ -86,9 +91,6 @@ class MainWindowViewModel : ViewModelBase
     {
         if (setPack is not null) ActivePack = setPack;
     }
-
-
-
 
     private void OpenDialog(ConfigurationViewModel.DialogType dialogType)
     {

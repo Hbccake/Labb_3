@@ -4,12 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Labb_3.Views"
-             mc:Ignorable="d" 
-             
-             d:DesignHeight="450" d:DesignWidth="800">
+             mc:Ignorable="d"        
+             d:DesignHeight="500" d:DesignWidth="800">
 
-
-    <Grid ShowGridLines="True" DataContext="{Binding PlayerViewModel}">
+    <Grid DataContext="{Binding PlayerViewModel}">
         <Grid.Resources>
             <SolidColorBrush x:Key="Buttoncolour" Color="LightGray">
             </SolidColorBrush>
@@ -19,85 +17,70 @@
                 <Setter Property="BorderThickness" Value="2"/>
                 <Setter Property="Margin" Value="10"/>
             </Style>
-            <DataTemplate x:Key="AnswerButtonImage">
 
-                <Grid >
+            <DataTemplate x:Key="AnswerButtonImage">
+                <Grid Height="65" Width="200" >
                     <TextBlock Text="{Binding Answer}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15" FontWeight="Bold"/>
-                    <Image Source="{Binding Image}" 
-                           Width="30" 
-                           Height="30" 
-                         HorizontalAlignment="Left"
+                    <Image Source="{Binding Image}"
+                           Width="50" 
+                           Height="50" 
+                           HorizontalAlignment="Left"
                            VerticalAlignment="Top"
                            Visibility="{Binding RelativeSource={RelativeSource AncestorType={x:Type Button}},
-                        Path=DataContext.HasAnswered,
-                        Converter={StaticResource BooleanToVisibility}}"
+                            Path=DataContext.HasAnswered,
+                            Converter={StaticResource BooleanToVisibility}}"
                            />
-
-
                 </Grid>
             </DataTemplate>
-
-
+            
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
 
-
         <StackPanel  Grid.Row="0" Orientation="Vertical" Margin="20" HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <TextBlock  Text="{Binding CurrentQuestion.Query}" FontSize="15" FontWeight="Bold" />
+            <TextBlock  Text="{Binding CurrentQuestion.Query}" FontSize="30" FontWeight="Bold" />
         </StackPanel>
-        <StackPanel Grid.Row="0" VerticalAlignment="Bottom" Margin="20" >
 
+        <StackPanel Grid.Row="0" VerticalAlignment="Bottom" Margin="20">
             <Label HorizontalAlignment="Center" FontSize="15" Content="{Binding QuestionCount}"/>
         </StackPanel>
 
-
         <StackPanel HorizontalAlignment="Right" VerticalAlignment="Top" Margin="5">
-
             <TextBlock Text="{Binding RemainingTime}" Margin="10" FontSize="20" FontWeight="Bold"/>
         </StackPanel>
 
-
-
         <StackPanel  Grid.Row="1" Margin="5">
             <StackPanel  Margin="10"  Orientation="Horizontal"  HorizontalAlignment="Center"  VerticalAlignment="Top">
-
 
                 <Button Content="{Binding ShuffledAnswers[0]}"
                         Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
                         CommandParameter="{Binding ShuffledAnswers[0].Answer}"
                         ContentTemplate="{StaticResource AnswerButtonImage}"
                         />
-
                 <Button Content="{Binding ShuffledAnswers[1]}" 
                         Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
                         CommandParameter="{Binding ShuffledAnswers[1].Answer}"
                         ContentTemplate="{StaticResource AnswerButtonImage}"/>
             </StackPanel>
-            <StackPanel  Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" >
 
+            <StackPanel  Margin="5" Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Bottom" >
                 <Button Content="{Binding ShuffledAnswers[2]}" 
                         Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
                         CommandParameter="{Binding ShuffledAnswers[2].Answer}"
-                        ContentTemplate="{StaticResource AnswerButtonImage}"/>
-
+                        ContentTemplate="{StaticResource AnswerButtonImage}"
+                        />
                 <Button Content="{Binding ShuffledAnswers[3]}" 
                         Command="{Binding AnswerHandlerCommand}" Margin="5" Height="70" Width="200"
                         CommandParameter="{Binding ShuffledAnswers[3].Answer}"
                         ContentTemplate="{StaticResource AnswerButtonImage}"/>
             </StackPanel>
-
         </StackPanel>
-
-
-
 
     </Grid>
 </UserControl>

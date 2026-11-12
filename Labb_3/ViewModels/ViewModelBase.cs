@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
+
 namespace Labb_3.ViewModels;
 
 class ViewModelBase : INotifyPropertyChanged
@@ -21,5 +22,6 @@ class ViewModelBase : INotifyPropertyChanged
         RaisePropertyChanged(propertyName);
         return true;
     }
+
 
 }

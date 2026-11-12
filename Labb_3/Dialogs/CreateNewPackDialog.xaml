@@ -10,33 +10,39 @@ WindowStyle="ToolWindow"
         mc:Ignorable="d"
         Title="New Question Pack" Height="225" Width="200">
 
-    
-        <StackPanel Margin="5">
-           
+
+    <StackPanel Margin="5">
+
         <Label Content="Pack Name:" FontWeight="Bold"/>
         <TextBox x:Name="textBox" Text="{Binding ConfigurationViewModel.NewPack.Name, UpdateSourceTrigger=PropertyChanged}"/>
         <Label Content="Difficulty:" FontWeight="Bold"/>
         <ComboBox ItemsSource="{Binding  ConfigurationViewModel.Difficulties}"
-      SelectedItem="{Binding ConfigurationViewModel.NewPack.Difficulty}"/>
+                  SelectedItem="{Binding ConfigurationViewModel.NewPack.Difficulty}"/>
+        
         <StackPanel Orientation="Horizontal">
-            <Label Content="Time Limit:" FontWeight="Bold"/>
-            <Label Content="{Binding ConfigurationViewModel.NewPack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
+            <Label  Content="Time Limit:" FontWeight="Bold"/>
+            <Label  Content="{Binding ConfigurationViewModel.NewPack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
         </StackPanel>
 
-        <Slider x:Name="timeSlider"
+        <Slider 
               Minimum="0"
               Maximum="120"
               Value="{Binding ConfigurationViewModel.NewPack.TimeLimitInSeconds}"
               IsSnapToTickEnabled="true"
-                TickFrequency="5"
-          TickPlacement="BottomRight"
+              TickFrequency="5"
+              TickPlacement="BottomRight"
           />
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
-            <Button Content="Cancel" Margin="10" IsCancel="True"/>
-            <Button Content="Create" Margin="10" Click="Button_Click" Command="{Binding  ConfigurationViewModel.CreateNewPackCommand}" />
+            <Button Content="Cancel" 
+                    Margin="10" 
+                    IsCancel="True"/>
+            <Button Content="Create" 
+                    Margin="10" 
+                    Click="Button_Click" 
+                    Command="{Binding  ConfigurationViewModel.CreateNewPackCommand}" />
         </StackPanel>
 
-        </StackPanel>
-   
+    </StackPanel>
+
 </Window>

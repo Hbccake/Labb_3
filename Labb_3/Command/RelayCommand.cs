@@ -17,8 +17,6 @@ class RelayCommand : ICommand
 
     public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     public bool CanExecute(object? parameter) => canExecute is null ? true : canExecute(parameter);
-
-
     public void Execute(object? parameter) => execute(parameter);
 
 }

@@ -35,7 +35,7 @@ public class AsyncRelayCommand : ICommand
         catch (Exception ex)
         {
 
-            // Förenklad felhantering för demonstrationssyfte.
+
             MessageBox.Show(ex.Message, "Error");
         }
         finally
