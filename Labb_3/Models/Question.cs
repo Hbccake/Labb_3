@@ -1,4 +1,7 @@
-﻿namespace Labb_3.Models;
+﻿
+using System.Text.Json.Serialization;
+
+namespace Labb_3.Models;
 
 class Question
 {
@@ -10,9 +13,22 @@ class Question
 
     }
 
-
+    [JsonPropertyName("question")]
     public string Query { get; set; }
+    [JsonPropertyName("correct_answer")]
     public string CorrectAnswer { get; set; }
+    [JsonPropertyName("incorrect_answers")]
     public string[] IncorrectAnswers { get; set; }
-    public bool HasValidAnswers { get; internal set; }
+    [JsonIgnore]
+    public bool HasValidAnswers
+    {
+        get =>
+            !string.IsNullOrWhiteSpace(CorrectAnswer) &&
+            IncorrectAnswers.Length is 3 &&
+            IncorrectAnswers.Any(answer => !string.IsNullOrWhiteSpace(answer));
+    }
+    public Question()
+    {
+        IncorrectAnswers = Array.Empty<string>();
+    }
 }

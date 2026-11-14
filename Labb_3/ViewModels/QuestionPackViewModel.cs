@@ -44,4 +44,11 @@ class QuestionPackViewModel : ViewModelBase
         }
     }
 
+    public QuestionPack ToModel()
+    {
+        _model.Questions = Questions.ToList();
+        return _model;
+    }
+
+
 }

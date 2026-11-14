@@ -3,6 +3,7 @@ using Labb_3.Models;
 using Labb_3.Services;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Http;
 using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
@@ -14,21 +15,26 @@ class ConfigurationViewModel : ViewModelBase
     public enum DialogType
     {
         PackOptions,
-        CreateNewPack
+        CreateNewPack,
+        ImportTrivia
     }
     private readonly MainWindowViewModel? _mainWindowViewModel;
     private readonly JSON _jSON = new();
+    private readonly Trivia _trivia = new();
     public ObservableCollection<QuestionPackViewModel> Packs { get; }
+    public TriviaPackViewModel TriviaPack { get; } = new();
     public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
     public RelayCommand AddQuestionCommand { get; }
     public RelayCommand RemoveQuestionCommand { get; }
     public RelayCommand OpenPackOptionsDialogCommand { get; }
     public RelayCommand OpenCreateNewPackDialogCommand { get; }
+    public RelayCommand OpenImportTriviaDbDialogCommand { get; }
     public RelayCommand CreateNewPackCommand { get; }
     public RelayCommand SelectQuestionPackCommand { get; }
     public RelayCommand DeleteQuestionPackCommand { get; }
     public AsyncRelayCommand SaveQuestionPackCommand { get; }
     public AsyncRelayCommand LoadQuestionPackCommand { get; }
+    public AsyncRelayCommand ImportTriviaCommand { get; }
     public Visibility HasSelectedQuestion => SelectedQuestion is not null ? Visibility.Visible : Visibility.Hidden;
     public bool CanRemoveQuestion => SelectedQuestion is not null && ActivePack.Questions.Contains(SelectedQuestion);
     public bool CanDeleteQuestionPack => ActivePack is not null;
@@ -74,6 +80,7 @@ class ConfigurationViewModel : ViewModelBase
             RaisePropertyChanged();
         }
     }
+
     public event Action<DialogType> OpenDialog;
     private void RaiseOpenDialog(DialogType dialogtype)
     {
@@ -112,6 +119,7 @@ class ConfigurationViewModel : ViewModelBase
 
         OpenPackOptionsDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.PackOptions));
         OpenCreateNewPackDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.CreateNewPack));
+        OpenImportTriviaDbDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.ImportTrivia));
         AddQuestionCommand = new RelayCommand(_ => AddNewQuestion());
         RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => CanRemoveQuestion);
         CreateNewPackCommand = new RelayCommand(_ => CreateNewPack());
@@ -119,35 +127,63 @@ class ConfigurationViewModel : ViewModelBase
         SelectQuestionPackCommand = new RelayCommand(SelectedQuestionPack);
         SaveQuestionPackCommand = new AsyncRelayCommand(_ => Save());
         LoadQuestionPackCommand = new AsyncRelayCommand(_ => LoadSavedPacks());
-
+        ImportTriviaCommand = new AsyncRelayCommand(_ => ImportTriviaQuestions());
     }
+
+
 
     private static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuizPacks");
 
-    private async Task LoadSavedPacks()
+    public async Task LoadSavedPacks()
     {
         var dialog = new OpenFileDialog()
         {
             InitialDirectory = Directory.Exists(FolderPath) ? FolderPath : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            Filter = "Question Packs |*.json*"
+            Filter = "Question Packs |*.json*",
+            FileName = "QuestionPacks.json",
+            ValidateNames = true
+
         };
 
         dialog.ShowDialog();
-        QuestionPack? pack = await _jSON.LoadAsync(filePath: dialog.FileName);
-        if (pack is null) return;
-        var loadedPack = new QuestionPackViewModel(pack);
 
-        Packs.Add(loadedPack);
-        ActivePack = loadedPack;
+        var loadedPacks = await _jSON.LoadAsync();
+        Packs.Clear();
+        if (loadedPacks is null) return;
+        foreach (var pack in loadedPacks)
+            Packs.Add(pack);
+
+        ActivePack = Packs.FirstOrDefault();
+
     }
-    private async Task Save()
+    private async Task ImportTriviaQuestions()
+    {
+        await _trivia.GetTriviaQuestionsAsync();
+    }
+    public async Task LoadCategories()
+    {
+        try
+        {
+            var categories = await _trivia.ImportCategoryAsync();
+            TriviaPack.Categories.Clear();
+
+            foreach (var category in categories)
+                TriviaPack.Categories.Add(category);
+
+            TriviaPack.SelectedCategory = TriviaPack.Categories
+            .FirstOrDefault(category => category.Id == TriviaPack.Category)
+            ?? TriviaPack.Categories.FirstOrDefault();
+        }
+        catch (HttpRequestException)
+        {
+            TriviaPack.Categories.Clear();
+        }
+    }
+    public async Task Save()
     {
         if (ActivePack is null) return;
 
-        Directory.CreateDirectory(FolderPath);
-        string filePath = Path.Combine(FolderPath, $"{ActivePack.Name}.json");
-        var pack = new QuestionPack(ActivePack.Name, ActivePack.Difficulty, ActivePack.TimeLimitInSeconds);
-        await _jSON.SaveAsync(pack, filePath);
+        await _jSON.SaveAsync(Packs);
     }
 
     private void RemoveQuestion()
@@ -155,6 +191,7 @@ class ConfigurationViewModel : ViewModelBase
         if (!CanRemoveQuestion) return;
         ActivePack?.Questions.Remove(SelectedQuestion);
         SelectedQuestion = null;
+        _ = Save();
     }
     private void DeletePack()
     {
@@ -165,17 +202,15 @@ class ConfigurationViewModel : ViewModelBase
 
         if (result != MessageBoxResult.Yes) return;
 
-        string filePath = Path.Combine(FolderPath, $"{deletePack.Name}.json");
-
         Packs.Remove(deletePack);
-        if (File.Exists(filePath))
-            File.Delete(filePath);
 
         ActivePack = Packs.FirstOrDefault();
         DeleteQuestionPackCommand.RaiseCanExecuteChanged();
+        _ = Save();
     }
     private void AddNewQuestion()
     {
+
         if (ActivePack.Questions.Any(question => !question.HasValidAnswers))
         {
             MessageBox.Show("Complete the current question with one correct and three incorrect answers before continuing", "Incomplete Question", MessageBoxButton.OK);
@@ -183,7 +218,7 @@ class ConfigurationViewModel : ViewModelBase
         }
 
         ActivePack?.Questions.Add(new Question("", "", "", "", ""));
-
+        _ = Save();
     }
     private void CreateNewPack()
     {

@@ -1,32 +1,47 @@
 ﻿using Labb_3.Models;
+using Labb_3.ViewModels;
 using System.IO;
 using System.Text.Json;
-
+using System.Text.Json.Serialization;
 namespace Labb_3.Services;
 
 class JSON
 {
+
+
     private static JsonSerializerOptions SerializerOptions = new()
     {
-        WriteIndented = true
+        WriteIndented = true,
+        Converters = { new JsonStringEnumConverter() },
+        IncludeFields = true,
     };
-
-    public async Task SaveAsync(QuestionPack pack, string filePath)
+    private static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuizPacks");
+    private static string FilePath => Path.Combine(FolderPath, "QuestionPacks.json");
+    public async Task SaveAsync(IEnumerable<QuestionPackViewModel> packs)
     {
+        Directory.CreateDirectory(FolderPath);
 
-        await using FileStream createStream = File.Create(filePath);
-        await JsonSerializer.SerializeAsync(createStream, pack, SerializerOptions);
+        var models = packs.Select(pack => pack.ToModel()).ToList();
+
+        var json = JsonSerializer.Serialize(models, SerializerOptions);
+
+        await File.WriteAllTextAsync(FilePath, json);
 
     }
-    public async Task<QuestionPack?> LoadAsync(string filePath)
+    public async Task<List<QuestionPackViewModel>> LoadAsync()
     {
-        await using FileStream stream = File.OpenRead(filePath);
-        return await JsonSerializer.DeserializeAsync<QuestionPack>(stream);
+
+        if (!File.Exists(FilePath)) return new List<QuestionPackViewModel>();
+
+        var json = await File.ReadAllTextAsync(FilePath);
+
+        var models = JsonSerializer.Deserialize<List<QuestionPack>>(json) ?? new List<QuestionPack>();
+
+        return models.Select(model => new QuestionPackViewModel(model)).ToList();
+
+
+
     }
 
-    public QuestionPack? Load(string filePath)
-    {
-        return JsonSerializer.Deserialize<QuestionPack>(File.ReadAllText(filePath));
-    }
 
 }

@@ -47,7 +47,7 @@ class PlayerViewModel : ViewModelBase
     private void StartQuiz()
     {
         if (ActivePack is null || ActivePack.Questions.Count == 0) return;
-        _mainWindowViewModel.ShowPlayerView();
+        _mainWindowViewModel.ChangeViewCommand.Execute(ViewType.PlayerView);
         RaisePropertyChanged(nameof(ScoreCounter));
         timer.Stop();
         _currentScore = 0;
@@ -58,7 +58,7 @@ class PlayerViewModel : ViewModelBase
         Shuffle(_shuffledQuestions);
 
         NextQuestion();
-        StartTimer();
+
 
     }
     private string? _selectedAnswer;
@@ -73,7 +73,7 @@ class PlayerViewModel : ViewModelBase
         _mainWindowViewModel = mainWindowViewModel;
 
         timer = new DispatcherTimer();
-        timer.Interval = TimeSpan.FromSeconds(1);
+        timer.Interval = TimeSpan.FromMilliseconds(100);
         timer.Tick += Timer_Tick;
         stopwatch = new Stopwatch();
 
@@ -93,7 +93,8 @@ class PlayerViewModel : ViewModelBase
         if (HasAnswered) return;
         SelectedAnswer = selectedAnswer;
         HasAnswered = true;
-
+        timer.Stop();
+        stopwatch.Stop();
         if (IsCorrectAnswer(selectedAnswer))
         {
             _currentScore++;
@@ -129,33 +130,36 @@ class PlayerViewModel : ViewModelBase
 
     private DispatcherTimer timer;
     private Stopwatch stopwatch;
-    private TimeSpan countdownTime;
+    private int _countdown;
     public void StartTimer()
     {
         if (ActivePack is null) return;
 
         timer.Stop();
-        stopwatch.Reset();
-        countdownTime = TimeSpan.FromSeconds(ActivePack.TimeLimitInSeconds);
-        RemainingTime = (int)countdownTime.TotalSeconds;
-        stopwatch.Start();
+        stopwatch.Restart();
+        _countdown = ActivePack.TimeLimitInSeconds;
+        RemainingTime = _countdown;
         timer.Start();
     }
     public void Timer_Tick(object? sender, EventArgs e)
     {
-        TimeSpan remainingTime = countdownTime - stopwatch.Elapsed;
-        if (remainingTime <= TimeSpan.Zero)
+        double remainingTime = _countdown - stopwatch.Elapsed.TotalSeconds;
+        if (remainingTime <= 0)
         {
             timer.Stop();
             stopwatch.Stop();
             RemainingTime = 0;
-            _mainWindowViewModel.EndQuiz();
+            HasAnswered = true;
+            NextQuestion();
             return;
         }
-        RemainingTime = (int)remainingTime.TotalSeconds;
+        int remainingSeconds = (int)Math.Ceiling(remainingTime);
+        if (RemainingTime != remainingSeconds)
+        {
+            RemainingTime = remainingSeconds;
+        }
     }
     private int _remainingTime;
-
     public int RemainingTime
     {
         get => _remainingTime;
@@ -168,12 +172,12 @@ class PlayerViewModel : ViewModelBase
 
     public void NextQuestion()
     {
-        stopwatch.Reset();
+
         if (_currentQuestionIndex >= _shuffledQuestions.Count)
         {
             timer.Stop();
 
-            _mainWindowViewModel.EndQuiz();
+            _mainWindowViewModel.ChangeViewCommand.Execute(ViewType.EndView);
             return;
         }
         HasAnswered = false;
@@ -186,11 +190,9 @@ class PlayerViewModel : ViewModelBase
             new ShuffleAnswers(CurrentQuestion.IncorrectAnswers[2], false)
             ];
         Shuffle(ShuffledAnswers);
-
-
         RaisePropertyChanged(nameof(ShuffledAnswers));
         RaisePropertyChanged(nameof(QuestionCount));
-
+        StartTimer();
     }
 
 }

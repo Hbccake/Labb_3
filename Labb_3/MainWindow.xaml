@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3"
         xmlns:views="clr-namespace:Labb_3.Views"
+        xmlns:viewModel="clr-namespace:Labb_3.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
     <Window.InputBindings>
@@ -12,16 +13,18 @@
         <KeyBinding  Key="O" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.LoadQuestionPackCommand}"/>
         <KeyBinding  Key="S" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.SaveQuestionPackCommand}"/>
         <KeyBinding  Key="I" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
-        <KeyBinding  Key="F4" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding Key="D" Modifiers="Ctrl" Command="{Binding ConfigurationViewModel.DeleteQuestionPackCommand}"/>
         <KeyBinding  Key="Insert"   Command="{Binding ConfigurationViewModel.AddQuestionCommand}"/>
         <KeyBinding  Key="Delete"   Command="{Binding ConfigurationViewModel.RemoveQuestionCommand}"/>
         <KeyBinding  Key="P" Modifiers="Ctrl"  Command="{Binding PlayerViewModel.StartQuizCommand}"/>
-        <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
-        <KeyBinding  Key="Enter" Modifiers="Alt"  Command="{Binding ConfigurationViewModel.ChangePackCommand}"/>
+        <KeyBinding  Key="E" Modifiers="Ctrl"  Command="{Binding ChangeViewCommand}" CommandParameter="{x:Static viewModel:ViewType.ConfigurationView}"/>
+       
     </Window.InputBindings>
 
+    
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
+        
     </Window.Resources>
     
     <Grid ShowGridLines="False">

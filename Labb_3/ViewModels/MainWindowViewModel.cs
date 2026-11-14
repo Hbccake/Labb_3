@@ -9,10 +9,28 @@ using System.Windows;
 
 namespace Labb_3.ViewModels;
 
+public enum ViewType
+{
+    ConfigurationView,
+    PlayerView,
+    EndView
+}
 class MainWindowViewModel : ViewModelBase
 {
+
+    public RelayCommand ChangeViewCommand { get; }
     public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
-    public RelayCommand ShowConfigurationViewCommand { get; }
+
+
+    public void ChangeView(ViewType viewType)
+    {
+
+        IsConfigurationViewVisible = viewType == ViewType.ConfigurationView;
+        IsActiveQuiz = viewType == ViewType.PlayerView;
+        ShowEndView = viewType == ViewType.EndView;
+
+    }
+
 
     private bool _showEndView;
     public bool ShowEndView
@@ -39,22 +57,7 @@ class MainWindowViewModel : ViewModelBase
 
     }
 
-    public void ShowPlayerView()
-    {
-        ShowEndView = false;
-        IsActiveQuiz = true;
-    }
-    public void EndQuiz()
-    {
-        IsActiveQuiz = false;
-        ShowEndView = true;
-    }
-    public void ShowConfigurationView()
-    {
-        IsConfigurationViewVisible = true;
-        IsActiveQuiz = false;
-        ShowEndView = false;
-    }
+
 
     private QuestionPackViewModel _activePack;
     public QuestionPackViewModel ActivePack
@@ -83,8 +86,13 @@ class MainWindowViewModel : ViewModelBase
         Packs.Add(ActivePack);
         ConfigurationViewModel.ActivePack = ActivePack;
         ConfigurationViewModel.OpenDialog += OpenDialog;
-        ShowConfigurationViewCommand = new RelayCommand(_ => ShowConfigurationView());
+        //_ = ConfigurationViewModel.LoadSavedPacks();
+        ChangeViewCommand = new RelayCommand(view =>
+        {
+            if (view is ViewType viewType) ChangeView(viewType);
+        });
 
+        ChangeView(ViewType.ConfigurationView);
     }
 
     public void SetActivePack(QuestionPackViewModel? setPack)
@@ -92,23 +100,26 @@ class MainWindowViewModel : ViewModelBase
         if (setPack is not null) ActivePack = setPack;
     }
 
-    private void OpenDialog(ConfigurationViewModel.DialogType dialogType)
+    private async void OpenDialog(ConfigurationViewModel.DialogType dialogType)
     {
         if (dialogType == ConfigurationViewModel.DialogType.CreateNewPack)
         {
             ConfigurationViewModel?.NewPack = new QuestionPackViewModel(new QuestionPack("<PackName>"));
         }
+        if (dialogType == ConfigurationViewModel.DialogType.ImportTrivia)
+            await ConfigurationViewModel.LoadCategories();
 
         Window dialog = dialogType switch
         {
             ConfigurationViewModel.DialogType.PackOptions => new PackOptionsDialog(),
             ConfigurationViewModel.DialogType.CreateNewPack => new CreateNewPackDialog(),
+            ConfigurationViewModel.DialogType.ImportTrivia => new ImportTriviaDbDialog(),
             _ => throw new NotImplementedException(),
         };
         dialog.DataContext = this;
         dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dialog.ShowDialog();
-
+        _ = ConfigurationViewModel.Save();
     }
 
 

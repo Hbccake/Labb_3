@@ -1,4 +1,6 @@
-﻿namespace Labb_3.Models;
+﻿using System.Text.Json.Serialization;
+
+namespace Labb_3.Models;
 
 internal enum Difficulty { Easy, Medium, Hard }
 class QuestionPack
@@ -13,8 +15,15 @@ class QuestionPack
     }
 
     public string Name { get; set; }
+    [JsonPropertyName("difficulty")]
     public Difficulty Difficulty { get; set; }
     public int TimeLimitInSeconds { get; set; }
     public List<Question> Questions { get; set; }
+
+    public QuestionPack()
+    {
+        Questions = new List<Question>();
+
+    }
 
 }
