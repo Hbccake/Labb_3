@@ -8,9 +8,7 @@ class TriviaPackViewModel : ViewModelBase
 {
     public ObservableCollection<Trivia.TriviaCategory> Categories { get; } = new();
     public ObservableCollection<Question> Questions { get; } = new();
-
-
-    private int _numberOfQuestions;
+    private int _numberOfQuestions = 1;
     public int NumberOfQuestions
     {
         get => _numberOfQuestions;
@@ -31,7 +29,6 @@ class TriviaPackViewModel : ViewModelBase
         set => SetProperty(ref _category, value);
 
     }
-
 
     private Trivia.TriviaCategory? _selectedCategory;
     public Trivia.TriviaCategory? SelectedCategory

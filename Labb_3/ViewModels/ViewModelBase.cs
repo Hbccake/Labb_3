@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using static Labb_3.ViewModels.ConfigurationViewModel;
 
 
 namespace Labb_3.ViewModels;
@@ -23,5 +24,10 @@ class ViewModelBase : INotifyPropertyChanged
         return true;
     }
 
+    public event Action<DialogType> OpenDialog;
+    public void RaiseOpenDialog(DialogType dialogtype)
+    {
+        OpenDialog?.Invoke(dialogtype);
+    }
 
 }

@@ -1,0 +1,73 @@
+[
+  {
+    "Name": "Friday 13th Quiz",
+    "difficulty": "Medium",
+    "TimeLimitInSeconds": 10,
+    "Questions": [
+      {
+        "question": "Who was the killer in the original Friday the 13th from 1980?",
+        "correct_answer": "Pamela Vorhees",
+        "incorrect_answers": [
+          "Jason Vorhees",
+          "Bob Vorhees",
+          "Jack Vorhees"
+        ]
+      },
+      {
+        "question": "Michael Myers mask in the Halloween movies is actually a mask of an actor spraypainted white. Which actor? ",
+        "correct_answer": "William Shatner",
+        "incorrect_answers": [
+          "Mike Myers",
+          "Nicolas Cage",
+          "Kurt Russel"
+        ]
+      },
+      {
+        "question": "Who famously died on Halloween 1926?",
+        "correct_answer": "Harry Houdini",
+        "incorrect_answers": [
+          "Jesus",
+          "Charlie Chaplin",
+          "Buster Keaton"
+        ]
+      },
+      {
+        "question": "What horror movie was the first American movie to show a toilet on the screen?",
+        "correct_answer": "Psycho",
+        "incorrect_answers": [
+          "Halloween",
+          "Nightmare on Elm Street",
+          "Village of the Damned"
+        ]
+      },
+      {
+        "question": "In the movie The Texas Chainsaw Massacre (1974) how many people are killed with a chainsaw?",
+        "correct_answer": "1",
+        "incorrect_answers": [
+          "4",
+          "10",
+          "8"
+        ]
+      },
+      {
+        "question": "What was Dr Frankensteins first name?",
+        "correct_answer": "Victor",
+        "incorrect_answers": [
+          "Michael",
+          "Ruben",
+          "John"
+        ]
+      },
+      {
+        "question": "The amazing movie Killer Klowns from Outer Space premiered in what year? ",
+        "correct_answer": "1988",
+        "incorrect_answers": [
+          "1986",
+          "1982",
+          "1984"
+        ]
+      }
+    ]
+  }
+  
+]

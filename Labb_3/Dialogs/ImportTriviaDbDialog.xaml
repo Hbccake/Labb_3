@@ -4,28 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3.Dialogs"
-                ResizeMode="NoResize"
-WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        WindowStyle="ToolWindow"
         mc:Ignorable="d"
-        Title="ImportTriviaDbDialog" Height="225" Width="200">
+        Title="Import Questions From Open Trivia database " Height="230" Width="300">
 
-    
-                
-        
+
         <StackPanel Margin="5">
 
             <Label Content="Category:" FontWeight="Bold"/>
-        <ComboBox ItemsSource="{Binding ConfigurationViewModel.TriviaPack.Categories}" DisplayMemberPath="Name" SelectedIndex="0"
-            SelectedItem="{Binding ConfigurationViewModel.TriviaPack.SelectedCategory,Mode=TwoWay}"/>
+        <ComboBox ItemsSource="{Binding ConfigurationViewModel.TriviaPack.Categories}" 
+                  DisplayMemberPath="Name" 
+                  SelectedIndex="0"
+                  SelectedItem="{Binding ConfigurationViewModel.TriviaPack.SelectedCategory,Mode=TwoWay}"/>
             
         <Label Content="Difficulty:" FontWeight="Bold"/>
             <ComboBox ItemsSource="{Binding  ConfigurationViewModel.Difficulties}"
               SelectedItem="{Binding ConfigurationViewModel.TriviaPack.TriviaDifficulty}"/>
 
-            <StackPanel Orientation="Horizontal">
-                
-                <Label  Content="Number Of Questions:" FontWeight="Bold"/>
-            <Label  Content="{Binding ConfigurationViewModel.TriviaPack.NumberOfQuestions, Mode=TwoWay}" Margin="50 0 " VerticalAlignment="Center"/>
+        <StackPanel Orientation="Horizontal">
+            <Label  Content="Number Of Questions:" FontWeight="Bold"/>
+            <Label  Content="{Binding ConfigurationViewModel.TriviaPack.NumberOfQuestions, Mode=TwoWay}" Margin="120 0 "  VerticalAlignment="Center" />
             </StackPanel>
 
             <Slider 
@@ -39,12 +38,14 @@ WindowStyle="ToolWindow"
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
 
                 <Button Content="Cancel" 
-                Margin="10" 
-                IsCancel="True"/>
+                        Width="50"
+                        Margin="10" 
+                        IsCancel="True"/>
                 <Button Content="Import" 
-                Margin="10" 
-                Click="Button_Click_Trivia"
-                Command="{Binding  ConfigurationViewModel.ImportTriviaCommand}" />
+                        Width="50"
+                        Margin="10" 
+                        Click="Button_Click_Trivia"
+                        Command="{Binding  ConfigurationViewModel.ImportTriviaCommand}" />
             </StackPanel>
 
         </StackPanel>

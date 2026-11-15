@@ -17,10 +17,9 @@ public enum ViewType
 }
 class MainWindowViewModel : ViewModelBase
 {
-
     public RelayCommand ChangeViewCommand { get; }
+    public AsyncRelayCommand ExitCommand { get; }
     public ObservableCollection<QuestionPackViewModel> Packs { get; } = new();
-
 
     public void ChangeView(ViewType viewType)
     {
@@ -30,7 +29,6 @@ class MainWindowViewModel : ViewModelBase
         ShowEndView = viewType == ViewType.EndView;
 
     }
-
 
     private bool _showEndView;
     public bool ShowEndView
@@ -48,7 +46,6 @@ class MainWindowViewModel : ViewModelBase
 
     }
 
-
     private bool _isConfigurationViewVisible;
     public bool IsConfigurationViewVisible
     {
@@ -56,8 +53,6 @@ class MainWindowViewModel : ViewModelBase
         set => SetProperty(ref _isConfigurationViewVisible, value);
 
     }
-
-
 
     private QuestionPackViewModel _activePack;
     public QuestionPackViewModel ActivePack
@@ -77,22 +72,26 @@ class MainWindowViewModel : ViewModelBase
     {
         PlayerViewModel = new PlayerViewModel(this);
         ConfigurationViewModel = new ConfigurationViewModel(this);
-        //ActivePack = new QuestionPackViewModel(new QuestionPack("Default Question Pack"));
-        var questionPack = new QuestionPack("Mina frågor!", Difficulty.Medium);
-        questionPack.Questions.Add(new Question("Vad heter sveriges huvudstad?", "Stockholm", "Oslo", "Göteborg", "London"));
-        questionPack.Questions.Add(new Question("Vad är 2 + 3?", "5", "10", "8", "1"));
+        ActivePack = new QuestionPackViewModel(new QuestionPack());
 
-        ActivePack = new QuestionPackViewModel(questionPack);
         Packs.Add(ActivePack);
         ConfigurationViewModel.ActivePack = ActivePack;
         ConfigurationViewModel.OpenDialog += OpenDialog;
-        //_ = ConfigurationViewModel.LoadSavedPacks();
+
+        _ = ConfigurationViewModel.LoadSavedPacks(showFileDialog: false);
+
         ChangeViewCommand = new RelayCommand(view =>
         {
             if (view is ViewType viewType) ChangeView(viewType);
         });
-
+        ExitCommand = new AsyncRelayCommand(_ => ExitAsync());
         ChangeView(ViewType.ConfigurationView);
+    }
+    private async Task ExitAsync()
+    {
+        if (ConfigurationViewModel is not null)
+            await ConfigurationViewModel.Save();
+        Application.Current.Shutdown();
     }
 
     public void SetActivePack(QuestionPackViewModel? setPack)
@@ -119,6 +118,7 @@ class MainWindowViewModel : ViewModelBase
         dialog.DataContext = this;
         dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
         dialog.ShowDialog();
+
         _ = ConfigurationViewModel.Save();
     }
 

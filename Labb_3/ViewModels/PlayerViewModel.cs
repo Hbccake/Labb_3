@@ -13,6 +13,10 @@ class PlayerViewModel : ViewModelBase
     private readonly Random _random = new();
     public RelayCommand StartQuizCommand { get; }
     public AsyncRelayCommand AnswerHandlerCommand { get; }
+    private DispatcherTimer timer;
+    private Stopwatch stopwatch;
+    private int _countdown;
+
     public string ScoreCounter => $"You got {_currentScore} out of {_mainWindowViewModel?.ActivePack.Questions.Count} answers correct!";
     public string QuestionCount => $"Question {_currentQuestionIndex} of {_mainWindowViewModel?.ActivePack.Questions.Count}";
     private List<ShuffleAnswers> _shuffledAnswers = [
@@ -23,11 +27,10 @@ class PlayerViewModel : ViewModelBase
 
         ];
     public List<ShuffleAnswers> ShuffledAnswers => _shuffledAnswers;
-
     private List<Question> _shuffledQuestions = new();
     private int _currentQuestionIndex;
     private int _currentScore;
-
+    public string CorrectAnswer => _shuffledAnswers.FirstOrDefault(answer => answer.IsCorrect).Answer;
     public Question _currentQuestion;
     public Question CurrentQuestion
     {
@@ -39,11 +42,54 @@ class PlayerViewModel : ViewModelBase
             RaisePropertyChanged(nameof(QuestionCount));
         }
     }
+    private string? _selectedAnswer;
+    public string? SelectedAnswer
+    {
+        get => _selectedAnswer;
+        set => SetProperty(ref _selectedAnswer, value);
+    }
+    private bool _hasAnswered;
+    public bool HasAnswered
+    {
+        get => _hasAnswered;
+        set => SetProperty(ref _hasAnswered, value);
+    }
+
     private bool IsCorrectAnswer(string selectedAnswer)
     {
         ShuffleAnswers answer = _shuffledAnswers.First(option => option.Answer == selectedAnswer);
         return answer.IsCorrect;
     }
+
+    private int _remainingTime;
+    public int RemainingTime
+    {
+        get => _remainingTime;
+        set
+        {
+            _remainingTime = value;
+            RaisePropertyChanged();
+        }
+    }
+
+    public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
+    {
+        _mainWindowViewModel = mainWindowViewModel;
+
+        timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(100)
+        };
+
+        timer.Tick += Timer_Tick;
+        stopwatch = new Stopwatch();
+
+        _shuffledQuestions = new List<Question>();
+        StartQuizCommand = new RelayCommand(_ => StartQuiz());
+        AnswerHandlerCommand = new AsyncRelayCommand(parameter => AnswerHandler(parameter?.ToString() ?? string.Empty));
+
+    }
+
     private void StartQuiz()
     {
         if (ActivePack is null || ActivePack.Questions.Count == 0) return;
@@ -59,35 +105,8 @@ class PlayerViewModel : ViewModelBase
 
         NextQuestion();
 
-
-    }
-    private string? _selectedAnswer;
-    public string? SelectedAnswer
-    {
-        get => _selectedAnswer;
-        set => SetProperty(ref _selectedAnswer, value);
     }
 
-    public PlayerViewModel(MainWindowViewModel? mainWindowViewModel)
-    {
-        _mainWindowViewModel = mainWindowViewModel;
-
-        timer = new DispatcherTimer();
-        timer.Interval = TimeSpan.FromMilliseconds(100);
-        timer.Tick += Timer_Tick;
-        stopwatch = new Stopwatch();
-
-        _shuffledQuestions = new List<Question>();
-        StartQuizCommand = new RelayCommand(_ => StartQuiz());
-        AnswerHandlerCommand = new AsyncRelayCommand(parameter => AnswerHandler(parameter?.ToString() ?? string.Empty));
-    }
-
-    private bool _hasAnswered;
-    public bool HasAnswered
-    {
-        get => _hasAnswered;
-        set => SetProperty(ref _hasAnswered, value);
-    }
     private async Task AnswerHandler(string selectedAnswer)
     {
         if (HasAnswered) return;
@@ -105,7 +124,6 @@ class PlayerViewModel : ViewModelBase
         await Task.Delay(3000);
         NextQuestion();
     }
-    public string CorrectAnswer => _shuffledAnswers.FirstOrDefault(answer => answer.IsCorrect).Answer;
 
     public struct ShuffleAnswers
     {
@@ -128,9 +146,24 @@ class PlayerViewModel : ViewModelBase
         }
     }
 
-    private DispatcherTimer timer;
-    private Stopwatch stopwatch;
-    private int _countdown;
+    public void Timer_Tick(object? sender, EventArgs e)
+    {
+        int elapsedSeconds = (int)Math.Floor(stopwatch.Elapsed.TotalSeconds);
+        int remainingSeconds = Math.Max(0, _countdown - elapsedSeconds);
+        if (RemainingTime != remainingSeconds)
+            RemainingTime = remainingSeconds;
+
+
+        if (elapsedSeconds >= _countdown)
+        {
+            timer.Stop();
+            stopwatch.Stop();
+
+            HasAnswered = true;
+            NextQuestion();
+        }
+
+    }
     public void StartTimer()
     {
         if (ActivePack is null) return;
@@ -140,34 +173,6 @@ class PlayerViewModel : ViewModelBase
         _countdown = ActivePack.TimeLimitInSeconds;
         RemainingTime = _countdown;
         timer.Start();
-    }
-    public void Timer_Tick(object? sender, EventArgs e)
-    {
-        double remainingTime = _countdown - stopwatch.Elapsed.TotalSeconds;
-        if (remainingTime <= 0)
-        {
-            timer.Stop();
-            stopwatch.Stop();
-            RemainingTime = 0;
-            HasAnswered = true;
-            NextQuestion();
-            return;
-        }
-        int remainingSeconds = (int)Math.Ceiling(remainingTime);
-        if (RemainingTime != remainingSeconds)
-        {
-            RemainingTime = remainingSeconds;
-        }
-    }
-    private int _remainingTime;
-    public int RemainingTime
-    {
-        get => _remainingTime;
-        set
-        {
-            _remainingTime = value;
-            RaisePropertyChanged();
-        }
     }
 
     public void NextQuestion()

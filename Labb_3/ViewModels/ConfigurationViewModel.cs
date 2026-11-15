@@ -4,6 +4,7 @@ using Labb_3.Services;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
@@ -24,17 +25,23 @@ class ConfigurationViewModel : ViewModelBase
     public ObservableCollection<QuestionPackViewModel> Packs { get; }
     public TriviaPackViewModel TriviaPack { get; } = new();
     public void RaiseActivePackChanged() => RaisePropertyChanged(nameof(ActivePack));
+
     public RelayCommand AddQuestionCommand { get; }
     public RelayCommand RemoveQuestionCommand { get; }
+
+
     public RelayCommand OpenPackOptionsDialogCommand { get; }
     public RelayCommand OpenCreateNewPackDialogCommand { get; }
     public RelayCommand OpenImportTriviaDbDialogCommand { get; }
+
     public RelayCommand CreateNewPackCommand { get; }
     public RelayCommand SelectQuestionPackCommand { get; }
     public RelayCommand DeleteQuestionPackCommand { get; }
     public AsyncRelayCommand SaveQuestionPackCommand { get; }
     public AsyncRelayCommand LoadQuestionPackCommand { get; }
+
     public AsyncRelayCommand ImportTriviaCommand { get; }
+
     public Visibility HasSelectedQuestion => SelectedQuestion is not null ? Visibility.Visible : Visibility.Hidden;
     public bool CanRemoveQuestion => SelectedQuestion is not null && ActivePack.Questions.Contains(SelectedQuestion);
     public bool CanDeleteQuestionPack => ActivePack is not null;
@@ -68,23 +75,6 @@ class ConfigurationViewModel : ViewModelBase
     public Difficulty[] Difficulties
     {
         get => Enum.GetValues<Difficulty>();
-    }
-    private QuestionPackViewModel _selectedPack { get; set; }
-    public QuestionPackViewModel SelectedPack
-    {
-        get => _selectedPack;
-
-        set
-        {
-            _selectedPack = value;
-            RaisePropertyChanged();
-        }
-    }
-
-    public event Action<DialogType> OpenDialog;
-    private void RaiseOpenDialog(DialogType dialogtype)
-    {
-        OpenDialog?.Invoke(dialogtype);
     }
 
     private Question? _selectedQuestion;
@@ -120,10 +110,13 @@ class ConfigurationViewModel : ViewModelBase
         OpenPackOptionsDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.PackOptions));
         OpenCreateNewPackDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.CreateNewPack));
         OpenImportTriviaDbDialogCommand = new RelayCommand(_ => RaiseOpenDialog(DialogType.ImportTrivia));
+
         AddQuestionCommand = new RelayCommand(_ => AddNewQuestion());
         RemoveQuestionCommand = new RelayCommand(_ => RemoveQuestion(), _ => CanRemoveQuestion);
+
         CreateNewPackCommand = new RelayCommand(_ => CreateNewPack());
         DeleteQuestionPackCommand = new RelayCommand(_ => DeletePack(), _ => CanDeleteQuestionPack);
+
         SelectQuestionPackCommand = new RelayCommand(SelectedQuestionPack);
         SaveQuestionPackCommand = new AsyncRelayCommand(_ => Save());
         LoadQuestionPackCommand = new AsyncRelayCommand(_ => LoadSavedPacks());
@@ -134,56 +127,98 @@ class ConfigurationViewModel : ViewModelBase
 
     private static string FolderPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "QuizPacks");
 
-    public async Task LoadSavedPacks()
-    {
-        var dialog = new OpenFileDialog()
-        {
-            InitialDirectory = Directory.Exists(FolderPath) ? FolderPath : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            Filter = "Question Packs |*.json*",
-            FileName = "QuestionPacks.json",
-            ValidateNames = true
-
-        };
-
-        dialog.ShowDialog();
-
-        var loadedPacks = await _jSON.LoadAsync();
-        Packs.Clear();
-        if (loadedPacks is null) return;
-        foreach (var pack in loadedPacks)
-            Packs.Add(pack);
-
-        ActivePack = Packs.FirstOrDefault();
-
-    }
-    private async Task ImportTriviaQuestions()
-    {
-        await _trivia.GetTriviaQuestionsAsync();
-    }
-    public async Task LoadCategories()
+    public async Task LoadSavedPacks(bool showFileDialog = true)
     {
         try
         {
-            var categories = await _trivia.ImportCategoryAsync();
-            TriviaPack.Categories.Clear();
+            if (showFileDialog)
+            {
+                var dialog = new OpenFileDialog()
+                {
+                    InitialDirectory = Directory.Exists(FolderPath) ? FolderPath : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    Filter = "Question Packs |*.json*",
+                    FileName = "QuestionPacks.json",
+                    ValidateNames = true
 
-            foreach (var category in categories)
-                TriviaPack.Categories.Add(category);
+                };
 
-            TriviaPack.SelectedCategory = TriviaPack.Categories
-            .FirstOrDefault(category => category.Id == TriviaPack.Category)
-            ?? TriviaPack.Categories.FirstOrDefault();
+                if (dialog.ShowDialog() != DialogResult.OK) return;
+            }
+            var loadedPacks = await _jSON.LoadAsync();
+            Packs.Clear();
+            foreach (var pack in loadedPacks)
+                Packs.Add(pack);
+
+            ActivePack = Packs.FirstOrDefault();
+        }
+        catch (JsonException)
+        {
+            MessageBox.Show("The file you are trying to open is invalid", "Load failed", MessageBoxButton.OK, MessageBoxImage.Error);
+
+        }
+
+    }
+
+    private async Task ImportTriviaQuestions()
+    {
+        if (ActivePack is null) return;
+        try
+        {
+            var questions = await _trivia.FetchQuestionsAsync(TriviaPack.NumberOfQuestions, TriviaPack.Category, TriviaPack.TriviaDifficulty);
+
+            TriviaPack.Questions.Clear();
+            foreach (var question in questions)
+            {
+                TriviaPack.Questions.Add(question);
+                ActivePack.Questions.Add(question);
+            }
+            ActivePack.Difficulty = TriviaPack.TriviaDifficulty;
         }
         catch (HttpRequestException)
         {
-            TriviaPack.Categories.Clear();
+            MessageBox.Show("Questions could not be imported. Trivia service unavailable", "Import Failed", MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        catch (JsonException)
+        {
+            MessageBox.Show("The Trivia Service returned an invalid response", "Import Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+    }
+
+    public async Task LoadCategories()
+    {
+
+        var categories = await _trivia.ImportCategoryAsync();
+        TriviaPack.Categories.Clear();
+
+        foreach (var category in categories)
+            TriviaPack.Categories.Add(category);
+
+        TriviaPack.SelectedCategory = TriviaPack.Categories
+        .FirstOrDefault(category => category.Id == TriviaPack.Category)
+        ?? TriviaPack.Categories.FirstOrDefault();
+
     }
     public async Task Save()
     {
         if (ActivePack is null) return;
+        try
+        {
+            await _jSON.SaveAsync(Packs);
+        }
+        catch (JsonException)
+        {
+            MessageBox.Show("The Questionpacks could not be serialized", "Save Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        catch (DirectoryNotFoundException e)
+        {
+            MessageBox.Show(e.Message);
 
-        await _jSON.SaveAsync(Packs);
+        }
+        catch (FileNotFoundException e)
+        {
+            MessageBox.Show(e.Message);
+        }
+
     }
 
     private void RemoveQuestion()
@@ -206,6 +241,7 @@ class ConfigurationViewModel : ViewModelBase
 
         ActivePack = Packs.FirstOrDefault();
         DeleteQuestionPackCommand.RaiseCanExecuteChanged();
+
         _ = Save();
     }
     private void AddNewQuestion()
@@ -235,8 +271,8 @@ class ConfigurationViewModel : ViewModelBase
     {
         if (obj is QuestionPackViewModel selectedPack)
         {
-            SelectedPack = selectedPack;
-            ActivePack = SelectedPack;
+
+            ActivePack = selectedPack;
 
         }
     }

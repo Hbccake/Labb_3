@@ -5,11 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Labb_3.Dialogs"
         ResizeMode="NoResize"
-WindowStyle="ToolWindow"
-       
+        WindowStyle="ToolWindow"
         mc:Ignorable="d"
         Title="New Question Pack" Height="225" Width="200">
-
 
     <StackPanel Margin="5">
 
@@ -18,7 +16,7 @@ WindowStyle="ToolWindow"
         <Label Content="Difficulty:" FontWeight="Bold"/>
         <ComboBox ItemsSource="{Binding  ConfigurationViewModel.Difficulties}"
                   SelectedItem="{Binding ConfigurationViewModel.NewPack.Difficulty}"/>
-        
+
         <StackPanel Orientation="Horizontal">
             <Label  Content="Time Limit:" FontWeight="Bold"/>
             <Label  Content="{Binding ConfigurationViewModel.NewPack.TimeLimitInSeconds, Mode=OneWay}" Margin="50 0 " VerticalAlignment="Center"/>
